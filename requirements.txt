@@ -1,0 +1,8 @@
+-e git+git@github.com:Watershed-Function-SFA/basin3d-core.git@master#egg=basin3d-core
+django
+djangorestframework
+django-filter
+pyyaml
+requests
+markdown
+pygments

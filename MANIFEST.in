@@ -1,0 +1,8 @@
+include LICENSE.md
+include README.md
+include docs/setup.rst
+include contributors.txt
+recursive-include docs/_build/latex *.pdf
+recursive-include docs/_build/html *
+recursive-include django_basin3d/templates *
+prune django_basin3d/tests

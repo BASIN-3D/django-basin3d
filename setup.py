@@ -40,9 +40,9 @@ if sys.version_info.major == 2:
 if sys.version_info.major == 3 and sys.version_info.minor < 6:
     sys.exit('Sorry, Python < 3.6 is not supported')
 
-setup(name='BASIN-3D',
+setup(name='django-basin3d',
       version=__release__,
-      description='Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets',
+      description='Django Framework for Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets',
       long_description=INSTALL,
       author='Val Hendrix',
       author_email='vchendrix@lbl.gov',
@@ -50,7 +50,7 @@ setup(name='BASIN-3D',
       py_modules=['manage'],
       include_package_data=True,
       install_requires=[
-          "basin3d-core",
+          "basin3d",
           "django",
           "djangorestframework",
           "django-filter",

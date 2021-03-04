@@ -71,22 +71,6 @@ Create a superuser
     ./manage.py createsuperuser
     
 
-## Documentation
-Sphinx is used to generate documentation. You first need
-to create a virtual environment for generating the docs.
-
-    $ source activate django-basin3d
-    $ pip install sphinx sphinx-autodoc-typehints
-    
-Generate the documentation
-   
-    $ cd docs
-    $ make html
-
-Review the generated documentation
-
-    $ open _build/html/index.html
-
 # Install
  
 Install a source distribution with pip:
@@ -102,7 +86,7 @@ see the [tags on this repository](https://github.com/BASIN-3D/django-basin3d/tag
 
 Workflow for tagging and building release:
 
-1. checkout the version to tag from `master`
+1. checkout the version to tag from `main`
 1. `git tag -a v[version]-[release] -m "Tagging release v[version]-[release]"`
 1. build distribution with `setup.py`
 1. `git push origin v[version]-[release]`

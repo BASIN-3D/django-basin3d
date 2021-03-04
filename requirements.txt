@@ -1,4 +1,4 @@
--e git+git@github.com:Watershed-Function-SFA/basin3d-core.git@master#egg=basin3d-core
+-e git+git@github.com:BASIN-3D/basin3d.git@master#egg=basin3d
 django
 djangorestframework
 django-filter

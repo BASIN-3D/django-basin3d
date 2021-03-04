@@ -1,13 +1,13 @@
-# BASIN-3D
-Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets
+# django-basin3d
+Django web framework for Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets
 
 
 
 ## Development Practices
 
-* BASIN-3D uses the [GitFlow model](https://datasift.github.io/gitflow/IntroducingGitFlow.html) 
+* django-basin3d uses the [GitFlow model](https://datasift.github.io/gitflow/IntroducingGitFlow.html) 
   of branching and code versioning in git. 
-* Code development will be peformed in a forked copy of the repo. Commits will not be made directly to the basin-3d repo.  Developers will submit a pull request that is then merged by another team member, if another team member is available.
+* Code development will be peformed in a forked copy of the repo. Commits will not be made directly to the django-basin3d repo.  Developers will submit a pull request that is then merged by another team member, if another team member is available.
 * Each pull request should contain only related modifications to a feature or bug fix.  
 * Sensitive information (secret keys, usernames etc) and configuration data (e.g database host port) should not be checked in to the repo.
 * A practice of rebasing with the main repo should be used rather that merge commmits.  
@@ -15,41 +15,40 @@ Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Dis
 ## Getting Started
 
 ### Prerequisities
-BASIN-D3 is a Django application which requires:
+django-basin3d is a Django application which requires:
 
-* Python (>= 3.6)
 * Django (>=2.0,<2.1)**
 
-** BASIN-3D may work on later versions of Django Application Framework, but it has not been tested.
+** django-basin3d may work on later versions of Django Application Framework, but it has not been tested.
 
 ### Get the code
 
 These instructions will get you a copy of the project up and running on your local machine for 
 development and testing purposes. 
 
-    $ git clone git@bitbucket.org:<your bitbucket username>/basin-3d.git
-    $ cd basin-3d
+    $ git clone git@bitbucket.org:BASIN-3D/django-basin3d.git
+    $ cd django-basin3d
     
 
 ## Develop
-Setup virtualenv for development and testing purposes. All basin-3d tests
-are in `basin3d.tests`. They can be
+Setup virtualenv for development and testing purposes. All django-basin3d tests
+are in `example-django`. 
 
 ### Example Django Project
 There is an example project for testing in directory `example-django`. 
    
 Create an Anaconda environment
 
-    conda create -y -n basin3d python=3.7
+    conda create -y -n django-basin3d python=3.7
 	
 Activate the new environment and prepare it for development
 
-	source activate basin3d
-	conda develop -npf -n basin3d .
+	source activate django-basin3d
+	conda develop -npf -n django-basin3d .
 
-Install  BASIN-3D and its dependencies
+Install django-basin3d and its dependencies
 
-	pip install $(cat requirements.txt ) pytest-django pytest-cov
+	pip install $(cat requirements.txt) pytest-django pytest-cov
 	python setup.py develop 
 	
 	
@@ -59,7 +58,7 @@ Migrate the database
 	
 Run the tests
 
-    pytest -v --cov basin3d  tests 
+    pytest -v --cov django_basin3d  tests 
 
 
 Run  the server
@@ -76,7 +75,7 @@ Create a superuser
 Sphinx is used to generate documentation. You first need
 to create a virtual environment for generating the docs.
 
-    $ source activate basin3d
+    $ source activate django-basin3d
     $ pip install sphinx sphinx-autodoc-typehints
     
 Generate the documentation
@@ -92,14 +91,14 @@ Review the generated documentation
  
 Install a source distribution with pip:
 
-    $ pip install BASIN-3D-<version>.tar.gz
+    $ pip install django-basin3d-<version>.tar.gz
     
 To get started read the [setup](./docs/setup.rst) documentation
 
 ## Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, 
-see the [tags on this repository](https://github.com/Watershed-Function-SFA/wfsfa-broker/tags). 
+see the [tags on this repository](https://github.com/BASIN-3D/django-basin3d/tags). 
 
 Workflow for tagging and building release:
 
@@ -111,7 +110,7 @@ Workflow for tagging and building release:
 ## Authors
 
 * **Charuleka Varadharajan** - [LBL](http://eesa.lbl.gov/profiles/charuleka-varadharajan/)
-* **Valerie Hendrix**  - [LBL](https://dst.lbl.gov/people.php?p=ValHendrix)
+* **Valerie Hendrix**  - [LBL](https://crd.lbl.gov/departments/data-science-and-technology/uss/staff/valerie-hendrix)
 * **Danielle Svehla Christianson** - [LBL](https://crd.lbl.gov/departments/data-science-and-technology/uss/staff/danielle-christianson/)
 
 

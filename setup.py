@@ -6,7 +6,7 @@ import sys
 from setuptools import setup, find_packages
 
 # Get the Quickstart documentation
-with open('docs/setup.rst') as readme:
+with open('README.md') as readme:
     INSTALL = readme.read()
 
 # Update version from latest git tags.
@@ -50,7 +50,7 @@ setup(name='django-basin3d',
       py_modules=['manage'],
       include_package_data=True,
       install_requires=[
-          "basin3d",
+          "basin3d-core",
           "django",
           "djangorestframework",
           "django-filter",

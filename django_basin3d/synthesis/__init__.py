@@ -1,6 +1,6 @@
 """
 `django_basin3d.synthesis`
-*******************
+**************************
 
 .. currentmodule:: django_basin3d.synthesis
 

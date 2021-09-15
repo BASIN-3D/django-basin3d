@@ -1,6 +1,6 @@
 """
 `django_basin3d.synthesis.viewsets`
-****************************
+***********************************
 
 .. currentmodule:: django_basin3d.synthesis.viewsets
 
@@ -47,7 +47,7 @@ def get_request_feature_type(request, return_format="enum"):
     Return the feature type if exists in the request
     :param request: request
     :param return_format: "enum" (default) = the FeatureTypes enum,
-                   otherwise return the text version
+    otherwise return the text version
     :return: the feature_type in the format specified, None if none exists
     """
     path_info = request.path_info.split("/")

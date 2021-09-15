@@ -1,4 +1,4 @@
 .. _restapireference:
 
 
-.. automodule:: basin3d
+.. automodule:: django_basin3d

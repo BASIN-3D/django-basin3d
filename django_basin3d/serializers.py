@@ -1,6 +1,6 @@
 """
 `django_basin3d.serializers`
-*********************
+****************************
 
 .. currentmodule:: django_basin3d.serializers
 

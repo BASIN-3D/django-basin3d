@@ -1,6 +1,6 @@
 """
 `django_basin3d.synthesis.serializers`
-*******************************
+**************************************
 
 .. currentmodule:: django_basin3d.synthesis.serializers
 
@@ -8,7 +8,7 @@
 :module author: Val Hendrix <vhendrix@lbl.gov>
 :module author: Danielle Svehla Christianson <dschristianson@lbl.gov>
 
-Serializers that render :mod:`basin.synthesis.models` from Python objects to `JSON` and back again.
+Serializers that render :py:mod:`basin3d.core.models` from Python objects to `JSON` and back again.
 
 """
 from numbers import Number

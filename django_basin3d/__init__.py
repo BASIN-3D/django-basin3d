@@ -1,7 +1,7 @@
 """
-==============================
-BASIN-3D REST APIs
-==============================
+========
+REST API
+========
 .. currentmodule:: django_basin3d
 
 :platform: Unix, Mac

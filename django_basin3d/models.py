@@ -1,6 +1,6 @@
 """
 `django_basin3d.models`
-****************
+***********************
 
 .. currentmodule:: django_basin3d.models
 

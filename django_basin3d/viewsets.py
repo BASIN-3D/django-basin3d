@@ -1,6 +1,6 @@
 """
 `django_basin3d.viewsets`
-******************
+*************************
 
 .. currentmodule:: django_basin3d.viewsets
 

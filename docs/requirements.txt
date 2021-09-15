@@ -1,8 +1,8 @@
+sphinx
+sphinx-autodoc-typehints
+graphviz
+sphinx_rtd_theme
 git+https://github.com/BASIN-3D/basin3d.git@main#egg=basin3d
 django
 djangorestframework
-django-filter
-pyyaml
-requests
-markdown
-pygments
+

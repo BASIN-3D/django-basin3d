@@ -1,4 +1,4 @@
-.. _apireference:
+.. _viewapireference:
 
 Synthesis Views
 ***************
@@ -12,7 +12,15 @@ brokering service.
     :backlinks: top
 
 
-.. automodule:: basin3d.synthesis.viewsets
+.. automodule:: django_basin3d.synthesis.viewsets
+    :members:
+    :show-inheritance:
+
+.. automodule:: basin3d.core.synthesis
+    :members:
+    :show-inheritance:
+
+.. automodule:: basin3d.core.plugin
     :members:
     :show-inheritance:
 

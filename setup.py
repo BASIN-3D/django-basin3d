@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import subprocess
-import sys
+import re
 
 from setuptools import setup, find_packages
 
@@ -34,46 +34,42 @@ if os.path.exists(version_py):
         code = compile(f.read(), version_py, 'exec')
     exec(code)
 
-if sys.version_info.major == 2:
-    sys.exit('Sorry, Python < 2.X is not supported')
-
-if sys.version_info.major == 3 and sys.version_info.minor < 6:
-    sys.exit('Sorry, Python < 3.6 is not supported')
+# Get the requirements
+dependency_links=[]
+required = []
+with open('requirements.txt') as f:
+    for r in f.read().splitlines():
+        if "github.com" in r:
+            version = re.search(r"@(.*)#", r).group(1)
+            name = re.search(r"=(.*)", r).group(1)
+            required.append(f"{name} @ {r}")
+            dependency_links.append(r)
+        else:
+            required.append(r)
 
 setup(name='django-basin3d',
       version=__release__,
       description='Django Framework for Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets',
       long_description=INSTALL,
-      author='Val Hendrix',
+      author='Valerie Cork Hendrix',
       author_email='vchendrix@lbl.gov',
       packages=find_packages(exclude=["*.tests", ]),
       py_modules=['manage'],
       include_package_data=True,
-      install_requires=[
-          "basin3d-core",
-          "django",
-          "djangorestframework",
-          "django-filter",
-          "pyyaml",
-          "requests",
-          "markdown",
-          "pygments"
-      ],
+      install_requires=required,
+      dependency_links=dependency_links,
+      python_requires='>=3.7,<3.9',
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 3 - Alpha',
           'Environment :: Web Environment',
-          'Framework :: Django :: 2.0',
-          'Framework :: Django :: 2.1',
-          'Framework :: Django :: 2.2',
+          'Framework :: Django :: 3.0',
           'License :: OSI Approved :: BSD License',
           'Intended Audience :: Developers',
           'Intended Audience :: Science/Research',
           'Topic :: Scientific/Engineering :: GIS',
           'Operating System :: OS Independent',
           'Programming Language :: Python',
-          'Programming Language :: Python :: 3.6',
-          'Programming Language :: Python :: 3.7',
-          'opic :: Software Development :: Libraries :: Application Frameworks',
+          'Topic :: Software Development :: Libraries :: Application Frameworks',
           'Topic :: Software Development :: Libraries :: Python Modules',
       ]
       )

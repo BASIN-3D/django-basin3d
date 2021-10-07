@@ -1,4 +1,4 @@
-git+https://github.com/BASIN-3D/basin3d.git@main#egg=basin3d
+git+https://github.com/BASIN-3D/basin3d.git@0.0.3#egg=basin3d
 django
 djangorestframework
 django-filter

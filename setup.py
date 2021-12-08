@@ -40,8 +40,12 @@ required = []
 with open('requirements.txt') as f:
     for r in f.read().splitlines():
         if "github.com" in r:
-            version = re.search(r"@(.*)#", r).group(1)
-            name = re.search(r"=(.*)", r).group(1)
+            m = re.search(r"@(.*)#", r)
+            if not m: continue
+            version = m.group(1)
+            m = re.search(r"=(.*)", r)
+            if not m: continue
+            name = m.group(1)
             required.append(f"{name} @ {r}")
             dependency_links.append(r)
         else:

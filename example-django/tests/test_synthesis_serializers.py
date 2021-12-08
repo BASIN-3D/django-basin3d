@@ -1,12 +1,13 @@
 import json
+from basin3d.core.schema.enum import FeatureTypeEnum, ResultQualityEnum, TimeFrequencyEnum
+from basin3d.core.types import SpatialSamplingShapes
 
 from django.test import TestCase
 from rest_framework.renderers import JSONRenderer
 
 from basin3d.core import models
 from basin3d.core.models import MeasurementTimeseriesTVPObservation
-from django_basin3d.models import DataSource, FeatureTypes, ObservedProperty, ObservedPropertyVariable, SamplingMedium, \
-    SpatialSamplingShapes
+from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, SamplingMedium
 from django_basin3d.serializers import ObservedPropertySerializer
 from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObservationSerializer, \
     MonitoringFeatureSerializer
@@ -56,7 +57,7 @@ class SynthesisSerializerTests(TestCase):
             id="Region1",
             name="AwesomeRegion",
             description="This region is really awesome.",
-            feature_type=FeatureTypes.REGION,
+            feature_type=FeatureTypeEnum.REGION,
             shape=SpatialSamplingShapes.SHAPE_SURFACE,
             coordinates=models.Coordinate(representative=models.RepresentativeCoordinate(
                 representative_point=models.AbsoluteCoordinate(
@@ -111,7 +112,7 @@ class SynthesisSerializerTests(TestCase):
             id="1",
             name="Point Location 1",
             description="The first point.",
-            feature_type=FeatureTypes.POINT,
+            feature_type=FeatureTypeEnum.POINT,
             shape=SpatialSamplingShapes.SHAPE_POINT,
             coordinates=models.Coordinate(
                 absolute=models.AbsoluteCoordinate(
@@ -134,7 +135,7 @@ class SynthesisSerializerTests(TestCase):
             related_sampling_feature_complex=[
                 models.RelatedSamplingFeature(plugin_access=self.plugin_access,
                                               related_sampling_feature="Region1",
-                                              related_sampling_feature_type=FeatureTypes.REGION,
+                                              related_sampling_feature_type=FeatureTypeEnum.REGION,
                                               role=models.RelatedSamplingFeature.ROLE_PARENT)]
         )
 
@@ -186,13 +187,13 @@ class SynthesisSerializerTests(TestCase):
             id="timeseries01",
             utc_offset="9",
             phenomenon_time="2018-11-07T15:28:20",
-            result_quality=models.ResultQuality.RESULT_QUALITY_CHECKED,
+            result_quality=ResultQualityEnum.CHECKED,
             feature_of_interest=models.MonitoringFeature(
                 plugin_access=self.plugin_access,
                 id="1",
                 name="Point Location 1",
                 description="The first point.",
-                feature_type=FeatureTypes.POINT,
+                feature_type=FeatureTypeEnum.POINT,
                 shape=SpatialSamplingShapes.SHAPE_POINT,
                 coordinates=models.Coordinate(
                     absolute=models.AbsoluteCoordinate(
@@ -215,11 +216,11 @@ class SynthesisSerializerTests(TestCase):
                 related_sampling_feature_complex=[
                     models.RelatedSamplingFeature(plugin_access=self.plugin_access,
                                                   related_sampling_feature="Region1",
-                                                  related_sampling_feature_type=FeatureTypes.REGION,
+                                                  related_sampling_feature_type=FeatureTypeEnum.REGION,
                                                   role=models.RelatedSamplingFeature.ROLE_PARENT)]
             ),
-            feature_of_interest_type=FeatureTypes.POINT,
-            aggregation_duration="DAILY",
+            feature_of_interest_type=FeatureTypeEnum.POINT,
+            aggregation_duration=TimeFrequencyEnum.DAY,
             time_reference_position="START",
             observed_property_variable="Acetate",
             statistic="MEAN",
@@ -228,7 +229,7 @@ class SynthesisSerializerTests(TestCase):
         )
 
         s = MeasurementTimeseriesTVPObservationSerializer(obj)
-
+        self.maxDiff = None
         json_obj = JSONRenderer().render(s.data)
         self.assertEqual({
                              "id": "A-timeseries01",
@@ -269,7 +270,7 @@ class SynthesisSerializerTests(TestCase):
                                                                        "role": "PARENT", "url": None}]
                              },
                              "feature_of_interest_type": "POINT",
-                             "aggregation_duration": "DAILY",
+                             "aggregation_duration": "DAY",
                              "time_reference_position": "START",
                              "observed_property_variable": 'ACT',
                              "statistic": "MEAN",

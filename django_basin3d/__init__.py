@@ -24,8 +24,8 @@ Data Sources
 BASIN-3D Data sources definitions.  All data sources defined are available for synthesis in the
 subesequent APIs.
 
-| `/synthesis/datasources --` Returns a list of data sources
-| `/synthesis/datasources/:id --` Get a single data source
+| `/datasources --` Returns a list of data sources
+| `/datasources/:id --` Get a single data source
 
 **Attributes:**
     - *name:* Unique name for the data source
@@ -35,7 +35,6 @@ subesequent APIs.
 
 **URLs**
   + url -- URL with details for the data source
-  + direct_path -- Access the direct API for the data source
   + check -- Validation URL for the data source connection
 
 
@@ -45,11 +44,11 @@ Common names for observed property variables. A observed property variable defin
 being measured. Data source observed property variables are mapped to these synthesized
 observed property variables.
 
-| `/synthesis/observedpropertyvariables --` Returns a list of observed property variables
-| `/synthesis/observedpropertyvariables/:id --` Get a single observed property variable
+| `/observedpropertyvariables --` Returns a list of observed property variables
+| `/observedpropertyvariables/:basin3d_id --` Get a single observed property variable
 
 **Attributes:**
-    - *id:* Unique observed property variable identifier
+    - *basin3d_id:* Unique observed property variable identifier
     - *full_name:* Descriptive name for the observed property variable
     - *categories:* Categories of which the variable is a member, listed in hierarchical order
     - *datasources:* List of the data sources that define the current observed property variable
@@ -62,8 +61,8 @@ Observed Properties
 -------------------
 Definition of the attributes for an observed property
 
-| `/synthesis/observedproperty --` Returns a list of observed property variables
-| `/synthesis/observedproperty/:id --` Get a single observed property variable
+| `/observedproperty --` Returns a list of observed property variables
+| `/observedproperty/:id --` Get a single observed property variable
 
 **Attributes:**
     - *observed_property_variable:* Observed property variable assigned to the observed property
@@ -80,11 +79,19 @@ Monitoring Features
 A feature on which an observation is made. Features organized into spatial
 hierarchies are described via the related_sampling_feature complex
 
-| `/synthesis/monitoringfeatures --` Returns a list of monitoring features types
-| `/synthesis/monitoringfeatures/:featuretype --` Returns a list of monitoring features of the specified feature type
-| `/synthesis/monitoringfeatures/:featuretype/:id --` Get a single monitoring feature
+| `/monitoringfeatures --` Returns a list of monitoring features types
+| `/monitoringfeatures/:featuretype --` Returns a list of monitoring features of the specified feature type
+| `/monitoringfeatures/:featuretype/:id --` Get a single monitoring feature
 
-**Attributes:**
+**Synthesis Response**
+This endpoint returns the following synthesis response object.
+
+```json
+{ "query": {}, "data": [] }
+```
+
+**Data Attributes**
+Attribute for each data element from the synthesis response is as follows:
     - *id:* Unique feature identifier
     - *name:* Feature name
     - *description:* Description of the feature
@@ -107,9 +114,17 @@ MeasurementTimeseriesTVPObservation: Series of measurement (numerical) observati
 in TVP (time value pair) format grouped by time (i.e., a timeseries).
 Attributes specified at the group level apply to all observations.
 
-| `/synthesis/measurementtvptimeseries/?filters --` Get a single measurement timeseries TVP observation:
+| `/measurementtvptimeseries/?filters --` Get a single measurement timeseries TVP observation:
 
-**Attributes:**
+**Synthesis Response**
+This endpoint returns the following synthesis response object.
+
+```json
+{ "query": {}, "data": [] }
+```
+
+**Data Attributes**
+Attribute for each data element from the synthesis response is as follows:
     - *id:* Observation identifier (optional)
     - *type:* type of observation = MEASUREMENT_TVP_TIMESERIES
     - *phenomenon_time:* Datetime of the observation, for a timeseries the start and end times can be provided

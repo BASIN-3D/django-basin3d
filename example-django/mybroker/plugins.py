@@ -1,10 +1,10 @@
 import logging
 
-from basin3d.core.types import TimeFrequency
-from basin3d.core.models import AbsoluteCoordinate, AltitudeCoordinate, Coordinate, DepthCoordinate, FeatureTypes, \
+from basin3d.core.models import AbsoluteCoordinate, AltitudeCoordinate, Coordinate, DepthCoordinate, \
     GeographicCoordinate, MeasurementTimeseriesTVPObservation, MonitoringFeature, RelatedSamplingFeature, \
     RepresentativeCoordinate, SpatialSamplingShapes, VerticalCoordinate
 from basin3d.core.plugin import DataSourcePluginPoint, basin3d_plugin, basin3d_plugin_access
+from basin3d.core.schema.enum import FeatureTypeEnum, TimeFrequencyEnum
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class AlphaSourcePlugin(DataSourcePluginPoint):
     title = 'Alpha Source Plugin'
 
-    # Question: should we use the FeatureTypes CV directly?
+    # Question: should we use the FeatureTypeEnum CV directly?
     feature_types = ['REGION', 'POINT', 'TREE']
 
     class DataSourceMeta:
@@ -66,7 +66,7 @@ def find_measurement_timeseries_tvp_observations(self, **kwargs):
                 id=num,
                 name="Point Location " + str(num),
                 description="The point.",
-                feature_type=FeatureTypes.POINT,
+                feature_type=FeatureTypeEnum.POINT,
                 shape=SpatialSamplingShapes.SHAPE_POINT,
                 coordinates=Coordinate(
                     absolute=AbsoluteCoordinate(
@@ -88,12 +88,12 @@ def find_measurement_timeseries_tvp_observations(self, **kwargs):
                 related_sampling_feature_complex=[
                     RelatedSamplingFeature(plugin_access=self,
                                            related_sampling_feature="Region1",
-                                           related_sampling_feature_type=FeatureTypes.REGION,
+                                           related_sampling_feature_type=FeatureTypeEnum.REGION,
                                            role=RelatedSamplingFeature.ROLE_PARENT)]
             ),
-            feature_of_interest_type=FeatureTypes.POINT,
+            feature_of_interest_type=FeatureTypeEnum.POINT,
             unit_of_measurement="nm",
-            aggregation_duration=TimeFrequency.DAY,
+            aggregation_duration=TimeFrequencyEnum.DAY,
             result_quality="CHECKED",
             time_reference_position=None,
             statistic="MEAN",
@@ -124,7 +124,7 @@ def list_monitoring_features(self, **kwargs):
         id="Region1",
         name="AwesomeRegion",
         description="This region is really awesome.",
-        feature_type=FeatureTypes.REGION,
+        feature_type=FeatureTypeEnum.REGION,
         shape=SpatialSamplingShapes.SHAPE_SURFACE,
         coordinates=Coordinate(representative=RepresentativeCoordinate(
             representative_point=AbsoluteCoordinate(
@@ -146,7 +146,7 @@ def list_monitoring_features(self, **kwargs):
         id="1",
         name="Point Location 1",
         description="The first point.",
-        feature_type=FeatureTypes.POINT,
+        feature_type=FeatureTypeEnum.POINT,
         shape=SpatialSamplingShapes.SHAPE_POINT,
         coordinates=Coordinate(
             absolute=AbsoluteCoordinate(
@@ -168,7 +168,7 @@ def list_monitoring_features(self, **kwargs):
         related_sampling_feature_complex=[
             RelatedSamplingFeature(plugin_access=self,
                                    related_sampling_feature="Region1",
-                                   related_sampling_feature_type=FeatureTypes.REGION,
+                                   related_sampling_feature_type=FeatureTypeEnum.REGION,
                                    role=RelatedSamplingFeature.ROLE_PARENT)]
     )
 

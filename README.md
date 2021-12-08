@@ -39,36 +39,36 @@ There is an example project for testing in directory `example-django`.
    
 Create an Anaconda environment
 
-    conda create -y -n django-basin3d python=3.7
+    conda create -y -n django-basin3d python=3.8
 	
 Activate the new environment and prepare it for development
 
-	source activate django-basin3d
+	conda activate django-basin3d
 	conda develop -npf -n django-basin3d .
 
 Install django-basin3d and its dependencies
 
-	pip install $(cat requirements.txt) pytest-django pytest-cov
+	pip install $(cat requirements.txt) pytest-django pytest-cov mypy flake9 pytest-flake8 pytest-mypy type-extensions
 	python setup.py develop 
 	
 	
 Migrate the database
 
-	./manage.py migrate
+	./example-django/manage.py migrate
 	
 Run the tests
 
-    pytest -v --cov django_basin3d  tests 
+    pytest -v --cov django_basin3d example-django/tests 
 
 
 Run  the server
 
-    ./manage.py runserver
+    ./example-django/manage.py runserver
 
     
 Create a superuser
 
-    ./manage.py createsuperuser
+    ./example-django/manage.py createsuperuser
     
 
 ## Documentation
@@ -76,7 +76,7 @@ Sphinx is used to generate documentation. You first need
 to create a virtual environment for generating the docs.
 
     $ source activate django-basin3d
-    $ pip install sphinx sphinx-autodoc-typehints
+    $ pip install -r docs/requirements.txt
     
 Generate the documentation
    

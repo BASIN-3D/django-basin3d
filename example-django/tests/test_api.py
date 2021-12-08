@@ -1,5 +1,5 @@
 import json
-
+import pytest
 
 from django.test import TestCase
 from rest_framework import status
@@ -112,14 +112,7 @@ class TestMeasurementTimeseriesTVPObservationAPI(TestCase):
     Test /measurement_tvp_timeseries api
     """
 
-    def setUp(self):
-        self.client = APIClient()
-
-    def test_get(self):
-        self.maxDiff = None
-        response = self.client.get('/measurement_tvp_timeseries/?monitoring_features=A-1&observed_property_variables=ACT&start_date=01/01/2020', format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected_output = [
+    VALID_OUTPUT_DATA = [
             {
                 "id": "A-1",
                 "unit_of_measurement": "nm",
@@ -228,4 +221,30 @@ class TestMeasurementTimeseriesTVPObservationAPI(TestCase):
                 "aggregation_duration": "DAY",
                 "phenomenon_time": None
             }]
-        self.assertEqual(json.loads(response.content.decode('utf-8')), expected_output)
+    VALID_OUTPUT = {"query": {'monitoring_features': ['A-1'],
+                              'observed_property_variables': ['ACT'],
+                              'start_date': '2020-01-01'}, "data": VALID_OUTPUT_DATA}
+
+    ERROR_OUTPUT = {'detail': 'Missing or invalid search criteria',
+                    'errors': [{'loc': ['startDate'],
+                                'msg': 'invalid date format',
+                                'type': 'value_error.date'}],
+                    'success': False}
+
+
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_get(self):
+        for query_string, expected_status, expected_output in [
+            ("monitoring_features=A-1&observed_property_variables=ACT&start_date=2020-01-01", 200, self.VALID_OUTPUT),
+            ("monitoring_features=A-1&observed_property_variables=ACT&start_date=1/1/2020", 400, self.ERROR_OUTPUT),
+            ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=2020-01-01", 200, self.VALID_OUTPUT),
+            ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=1/1/2020", 400, self.ERROR_OUTPUT)]:
+
+            print(f"{query_string}")
+            response = self.client.get(f'/measurement_tvp_timeseries/?{query_string}', format='json')
+            self.assertEqual(response.status_code, expected_status)
+
+            print(response.content.decode('utf-8'))
+            assert json.loads(response.content.decode('utf-8')) == expected_output

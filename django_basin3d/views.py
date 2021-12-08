@@ -17,11 +17,12 @@ import logging
 import sys
 from collections import OrderedDict
 
+from basin3d.core.schema.enum import FeatureTypeEnum
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import NoReverseMatch, reverse
 
-from django_basin3d.models import DataSource, get_feature_types
+from django_basin3d.models import DataSource
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,7 @@ def monitoring_features_lists(request, format=format):
     Generate list of URLs to views for monitoring features based on availability in datasource
     """
     monitoring_features_list = {}
-    supported_feature_types = get_feature_types()
+    supported_feature_types = FeatureTypeEnum.values()
     for datasource in DataSource.objects.all():
         viewset_models = []
         plugin = datasource.get_plugin()  # Get the plugin model

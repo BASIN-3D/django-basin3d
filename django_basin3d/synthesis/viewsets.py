@@ -23,6 +23,9 @@ from the connected data sources.
 import logging
 
 import typing
+import pydantic
+from basin3d.core.schema.enum import FeatureTypeEnum
+from basin3d.core.schema.query import QueryMeasurementTimeseriesTVP, QueryMonitoringFeature
 from rest_framework import status, versioning
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -33,7 +36,6 @@ from basin3d.core.models import MeasurementTimeseriesTVPObservation, MonitoringF
 from basin3d.core.synthesis import DataSourceModelAccess, MeasurementTimeseriesTVPObservationAccess, \
     MonitoringFeatureAccess
 
-from basin3d.core.types import FeatureTypes
 from django_basin3d.models import DataSource
 from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObservationSerializer, \
     MonitoringFeatureSerializer
@@ -42,7 +44,7 @@ from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObserva
 logger = logging.getLogger(__name__)
 
 
-def get_request_feature_type(request, return_format="enum"):
+def get_request_feature_type(request):
     """
     Return the feature type if exists in the request
     :param request: request
@@ -50,14 +52,9 @@ def get_request_feature_type(request, return_format="enum"):
     otherwise return the text version
     :return: the feature_type in the format specified, None if none exists
     """
-    path_info = request.path_info.split("/")
-    for k, feature_type in FeatureTypes.TYPES.items():
-        ft = "{}s".format("".join(feature_type.lower().split()))
-        if ft in path_info:
-            if return_format == "enum":
-                return FeatureTypes.TYPES[k].lower()
-            else:
-                return feature_type
+    for feature_type in FeatureTypeEnum.values():
+        if feature_type.lower() in request.path_info:
+            return feature_type
     return None
 
 
@@ -101,18 +98,17 @@ class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
         """
         items = []
 
-        if "request" not in kwargs:
-            raise Response({"success": False, "detail": "Request is missing"}, status=status.HTTP_400_BAD_REQUEST)
-
         request = kwargs['request']
-        feature_type = get_request_feature_type(request)
+        query = kwargs['query']
 
-        params = request.query_params.dict()
-        for i in super(DataSourcePluginViewSet, self).list(feature_type=feature_type, **params):
+        itr = super(DataSourcePluginViewSet, self).list(query=query)
+        for i in itr:
             items.append(i)
 
         serializer = self.__class__.serializer_class(items, many=True, context={'request': request})
-        return Response(serializer.data)
+        synthesis_response = itr.synthesis_response.dict(exclude_unset=True)
+        synthesis_response['data'] = serializer.data
+        return Response(synthesis_response)
 
     def retrieve(self, pk: str, **kwargs) -> Response:
         """
@@ -125,16 +121,16 @@ class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
         :rtype: :class:`rest_framework.request.Response`
         """
 
-        # split the datasource id prefix from the primary key
-        if "request" not in kwargs:
-            return Response({'success': False, 'detail': "Request is missing"},
-                            status=status.HTTP_400_BAD_REQUEST, )
-
         request = kwargs['request']
-        feature_type = get_request_feature_type(request)
+        query = kwargs['query']
 
         try:
-            item = super(DataSourcePluginViewSet, self).retrieve(pk=pk, feature_type=feature_type, **request.query_params)
+            try:
+                itr = super(DataSourcePluginViewSet, self).list(query)
+                item = next(itr)
+            except StopIteration:
+                item = None
+                itr = None
 
             if not item:
                 return Response({"success": False, "detail": "There is no detail for {}".format(pk)},
@@ -143,7 +139,9 @@ class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
 
                 try:
                     serializer = self.__class__.serializer_class(item, context={'request': request})
-                    return Response(serializer.data)
+                    synthesis_response = itr.synthesis_response.dict(exclude_unset=True)
+                    synthesis_response['data'] = serializer.data
+                    return Response(synthesis_response)
                 except Exception as e:
                     logger.error("Plugin error: {}".format(e))
 
@@ -159,7 +157,15 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
     """
     MonitoringFeature: A feature upon which monitoring is made. OGC Timeseries Profile OM_MonitoringFeature.
 
-    **Properties**
+    **Synthesis Response**
+    This endpoint returns the following synthesis response object.
+
+    ```json
+    { "query": {}, "data": [] }
+    ```
+
+    **Data Attributes**
+    Attribute for each data element from the synthesis response is as follows:
 
     * *id:* string, Unique feature identifier
     * *name:* string, Feature name
@@ -178,18 +184,33 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
 
     * *datasource (optional):* a single data source id prefix (e.g ?datasource=`datasource.id_prefix`)
 
-    **Restrict fields**  with query parameter ‘fields’. (e.g. ?fields=id,name)
+    **Restrict fields**  with query parameter `fields`. (e.g. `?fields=id,name`)
     """
     serializer_class = MonitoringFeatureSerializer
     synthesis_model = MonitoringFeature
 
     @typing.no_type_check
     def list(self, request: Request, format: str = None) -> Response:
-        return super().list(request=request, format=format)
+        if not request:
+            raise Response({"success": False, "detail": "Request is missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+        feature_type = get_request_feature_type(request)
+
+        params = request.query_params.dict()
+        return super().list(request=request, format=format, query=QueryMonitoringFeature(feature_type=feature_type,
+                                                                                         **params))
 
     @typing.no_type_check
     def retrieve(self, request: Request, pk: str) -> Response:
-        return super().retrieve(request=request, pk=pk)
+        if not request:
+            return Response({'success': False, 'detail': "Request is missing"},
+                            status=status.HTTP_400_BAD_REQUEST, )
+
+        feature_type = get_request_feature_type(request)
+        params = request.query_params.dict()
+        return super().retrieve(request=request, pk=pk, query=QueryMonitoringFeature(monitoring_features=[pk],
+                                                                                     feature_type=feature_type,
+                                                                                     **params))
 
     @action(detail=True, url_name='regions-detail')
     def regions(self, request, pk=None):
@@ -242,7 +263,15 @@ class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObserva
     MeasurementTimeseriesTVPObservation: Series of measurement (numerical) observations in
     TVP (time value pair) format grouped by time (i.e., a timeseries).
 
-    **Properties**
+    **Synthesis Response**
+    This endpoint returns the following synthesis response object.
+
+    ```json
+    { "query": {}, "data": [] }
+    ```
+
+    **Data Attributes**
+    Attribute for each data element from the synthesis response is as follows:
 
     * *id:* string, Observation identifier (optional)
     * *type:* enum, MEASUREMENT_TVP_TIMESERIES
@@ -267,7 +296,7 @@ class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObserva
     * *aggregation_duration (default: DAY):* enum (YEAR|MONTH|DAY|HOUR|MINUTE|SECOND)
     * *datasource (optional):* a single data source id prefix (e.g ?datasource=`datasource.id_prefix`)
 
-    **Restrict fields** with query parameter ‘fields’. (e.g. ?fields=id,name)
+    **Restrict fields** with query parameter `fields`. (e.g. `?fields=id,name`)
 
 
     """
@@ -276,4 +305,15 @@ class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObserva
 
     @action(detail=False, url_path='measurement_tvp_timeseries', url_name='measurementtvptimeseries-list', methods=['GET'])
     def list(self, request: Request, format: str = None) -> Response:
-        return super().list(request=request, format=format)
+        if not request:
+            return Response({'success': False, 'detail': "Request is missing"},
+                            status=status.HTTP_400_BAD_REQUEST, )
+
+        params = request.query_params.dict()
+
+        try:
+            return super().list(request=request, format=format, query=QueryMeasurementTimeseriesTVP(**params))
+        except pydantic.ValidationError as exec_info:
+            return Response({'success': False, 'detail': "Missing or invalid search criteria",
+                             "errors": exec_info.errors()},
+                            status=status.HTTP_400_BAD_REQUEST, )

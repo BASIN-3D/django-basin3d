@@ -1,6 +1,6 @@
 """
 `django_basin3d.catalog`
-***********************
+************************
 
 .. currentmodule:: django_basin3d.catalog
 
@@ -351,10 +351,10 @@ class CatalogDjango(CatalogBase):
                     v = django_models.ObservedPropertyVariable.objects.get(
                         basin3d_id=record.observed_property_variable.basin3d_id)
                     op = django_models.ObservedProperty.objects.get(observed_property_variable=v, datasource=datasource)
-                    op.sampling_medium = record.sampling_medium
+                    op.sampling_medium = sm
                     op.description = record.datasource_description
                     op.save()
-                    print("Created Observed Property {} for {}".format(v, datasource))
+                    print(f"Created Observed Property '{v} - {record.sampling_medium}' for {datasource}")
                 except django_models.ObservedProperty.DoesNotExist:
 
                     op = django_models.ObservedProperty(sampling_medium=sm,
@@ -362,7 +362,7 @@ class CatalogDjango(CatalogBase):
                                                         datasource=datasource,
                                                         observed_property_variable=v)
                     op.save()
-                    print("Created Observed Property {} for {}".format(v, datasource))
+                    print(f"Created Observed Property '{v} - {record.sampling_medium}' for {datasource}")
                 except IntegrityError as ie:
                     # Its OK that is has already been created
                     print(str(ie), file=sys.stderr)

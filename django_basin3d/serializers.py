@@ -20,8 +20,6 @@ About Django Serializers:
     content types. Serializers also provide deserialization, allowing parsed data to be
     converted back into complex types, after first validating the incoming data.
     *-- http://www.django-rest-framework.org/api-guide/serializers/*
-
-
 """
 from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, \
     DataSourceObservedPropertyVariable

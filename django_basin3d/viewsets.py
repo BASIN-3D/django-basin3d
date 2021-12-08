@@ -44,10 +44,10 @@ class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
 
         **Properties**
 
-        * *name:* string, Unique name for the Data Source
-        * *id_prefix:* string, unique id prefix for all Data Source ids
-        * *location:* string, Location of the Data Source
         * *url:* url, Endpoint for Data Source
+        * *name:* string, Unique name for the Data Source
+        * *location:* string, Location of the Data Source
+        * *id_prefix:* string, unique id prefix for all Data Source ids
         * *observed_property_variables:* url, Observed property variables for Data Source
         * *check:* url, Validate the Data Source connection
 
@@ -136,11 +136,11 @@ class ObservedPropertyVariableViewSet(viewsets.ReadOnlyModelViewSet):
 
         **Properties**
 
-        * *id:* string, Unique observed property variable identifier
+        * *url:* url, Endpoint for the observed property variable
+        * *basin3d_id:* string, Unique observed property variable identifier
         * *full_name:* string, Descriptive name
         * *categories:* list of strings, Categories of which the variable is a member, listed in hierarchical order
         * *datasources:* url, Retrieves the datasources that define the current variable
-        * *url:* url, Endpoint for the observed property variable
 
     """
     queryset = ObservedPropertyVariable.objects.all()
@@ -179,12 +179,12 @@ class ObservedPropertyViewSet(viewsets.ReadOnlyModelViewSet):
 
         **Properties**
 
+        * *url:* url, endpoint for observed property
         * *observed_property_variable:* string, observed property variable assigned to the observed property
         * *datasource:* string, data source defining the observed property
         * *sampling_medium:* enum, medium in which the observed property is observed
             (WATER, GAS, SOLID_PHASE, OTHER, NOT_APPLICABLE)
         * *description:* string, additional information about the observed property
-        * *url:* url, endpoint for observed property
 
     """
     queryset = ObservedProperty.objects.all()

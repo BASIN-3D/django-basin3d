@@ -91,7 +91,7 @@ This endpoint returns the following synthesis response object.
 ```
 
 **Data Attributes**
-Attribute for each data element from the synthesis response is as follows:
+    Attribute for each data element from the synthesis response is as follows:
     - *id:* Unique feature identifier
     - *name:* Feature name
     - *description:* Description of the feature
@@ -124,7 +124,7 @@ This endpoint returns the following synthesis response object.
 ```
 
 **Data Attributes**
-Attribute for each data element from the synthesis response is as follows:
+    Attribute for each data element from the synthesis response is as follows:
     - *id:* Observation identifier (optional)
     - *type:* type of observation = MEASUREMENT_TVP_TIMESERIES
     - *phenomenon_time:* Datetime of the observation, for a timeseries the start and end times can be provided

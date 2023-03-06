@@ -41,7 +41,10 @@ class CatalogDjango(CatalogBase):
 
         try:
             from django_basin3d.models import DataSource
-            return DataSource.objects.count() > 0
+            datasources = DataSource.objects.count()
+            if isinstance(datasources, int):
+                return datasources > 0
+            return False
         except ImportError:
             return False
 
@@ -331,7 +334,7 @@ class CatalogDjango(CatalogBase):
                     p = django_models.ObservedPropertyVariable()
                     p.basin3d_id = record.basin3d_id
                     p.full_name = record.full_name
-                    p.categories = ",".join(record.categories)
+                    p.categories = ",".join(record.categories)  # type: ignore
                     p.save()
 
                 except IntegrityError:

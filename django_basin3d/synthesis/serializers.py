@@ -41,7 +41,7 @@ class TimestampField(serializers.DateTimeField):
         if isinstance(value, str) and value.isdigit():
             timestamp = int(value)
         elif isinstance(value, Number):
-            timestamp = value
+            timestamp = int(str(value))
 
         # ToDo: add additional time formats
         if timestamp:
@@ -88,7 +88,7 @@ class IdUrlSerializerMixin(object):
         # Instantiate the serializer superclass
         super(IdUrlSerializerMixin, self).__init__(*args, **kwargs)
 
-        self.fields["url"] = serializers.SerializerMethodField()
+        self.fields["url"] = serializers.SerializerMethodField()  # type: ignore
 
     def get_url(self, obj):
         """
@@ -96,10 +96,10 @@ class IdUrlSerializerMixin(object):
         :param obj: an object instance
         :return: An URL to the current object instance
         """
-        if "request" in self.context and self.context["request"]:
+        if "request" in self.context and self.context["request"]:  # type: ignore
             return reverse(viewname='{}-detail'.format(obj.__class__.__name__.lower()),
                            kwargs={'pk': obj.id},
-                           request=self.context["request"], )
+                           request=self.context["request"], )  # type: ignore
 
 
 class PersonSerializer(serializers.Serializer):
@@ -364,14 +364,14 @@ class ObservationSerializerMixin(object):
     def __init__(self, *args, **kwargs):
         super(ObservationSerializerMixin, self).__init__(*args, **kwargs)
 
-        self.fields["id"] = serializers.CharField(read_only=True)
-        self.fields["type"] = serializers.CharField(read_only=True)
-        self.fields["utc_offset"] = serializers.IntegerField(read_only=True)
-        self.fields["phenomenon_time"] = TimestampField(read_only=True)
-        self.fields["observed_property_variable"] = serializers.CharField(read_only=True)
-        self.fields["result_quality"] = serializers.CharField(read_only=True)
-        self.fields["feature_of_interest"] = ReadOnlySynthesisModelField(serializer_class=MonitoringFeatureSerializer)
-        self.fields["feature_of_interest_type"] = serializers.CharField(read_only=True)
+        self.fields["id"] = serializers.CharField(read_only=True)  # type: ignore
+        self.fields["type"] = serializers.CharField(read_only=True)  # type: ignore
+        self.fields["utc_offset"] = serializers.IntegerField(read_only=True)  # type: ignore
+        self.fields["phenomenon_time"] = TimestampField(read_only=True)  # type: ignore
+        self.fields["observed_property_variable"] = serializers.CharField(read_only=True)  # type: ignore
+        self.fields["result_quality"] = serializers.CharField(read_only=True)  # type: ignore
+        self.fields["feature_of_interest"] = ReadOnlySynthesisModelField(serializer_class=MonitoringFeatureSerializer)  # type: ignore
+        self.fields["feature_of_interest_type"] = serializers.CharField(read_only=True)  # type: ignore
 
 
 class MeasurementTimeseriesTVPObservationSerializer(ObservationSerializerMixin, serializers.Serializer):
@@ -441,4 +441,3 @@ class MeasurementTimeseriesTVPObservationSerializer(ObservationSerializerMixin, 
             return reverse(viewname='measurementtvptimeseries-detail',
                            kwargs={'pk': obj.id},
                            request=self.context["request"], )
-

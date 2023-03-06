@@ -5,7 +5,7 @@ What is Django BASIN-3D?
 **Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets**
 
 Django BASIN-3D is a software that synthesizes diverse earth science data from a variety of remote sources in real-time without the need for storing all the data in a single database.
-It is a data brokering framework designed to parse, translate, and synthesize diverse observations from well-curated repositories into standardized formats for scienfic uses such as analysis and visualization.
+It is a data brokering framework designed to parse, translate, and synthesize diverse observations from well-curated repositories into standardized formats for scientific uses such as analysis and visualization.
 Thus, it provides unified access to a diverse set of data sources and data types by connecting
 to the providers in real-time and transforming the data streams to provide an integrated view.
 BASIN-3D enables users to always have access to the latest data from each of the sources, but to
@@ -29,6 +29,6 @@ Readers can find out more about BASIN-3D and its application to the East River W
 References
 ^^^^^^^^^^
 
-- Hubbard, S. S., K. H. Williams, D. Agarwal, J. Banfield, H. Beller, N. Bouskill, E. Brodie, R. Carroll, B. Dafflon, D. Dwivedi, N. Falco, B. Faybishenko, R. Maxwell, P. Nico, C. Steefel, H. Steltzer, T. Tokunaga, P. A. Tran, H. Wainwright, and C. Varadharajan. 2018. The East River, Colorado, Watershed: A Mountainous Community Testbed for Improving Predictive Understanding of Multiscale Hydrological–Biogeochemical Dynamics. Vadose Zone J. 17:180061. http://dx.doi.org/10.2136/vzj2018.03.0061
+- Hubbard, S. S., K. H. Williams, D. Agarwal, J. Banfield, H. Beller, N. Bouskill, E. Brodie, R. Carroll, B. Dafflon, D. Dwivedi, N. Falco, B. Faybishenko, R. Maxwell, P. Nico, C. Steefel, H. Steltzer, T. Tokunaga, P. A. Tran, H. Wainwright, and C. Varadharajan. 2018. The East River, Colorado, Watershed: A Mountainous Community Testbed for Improving Predictive Understanding of Multiscale Hydrological–Biogeochemical Dynamics. Vadose Zone J. 17:180061. https://dx.doi.org/10.2136/vzj2018.03.0061
 - Hendrix,V.C., D.S. Christianson, S.S. Hubbard, D.A. Agarwal and C. Varadharajan, "BASIN-3D: Reducing the data processing burden for earth scientists", accepted to Gateways 2019.
 - Varadharajan C., V. Hendrix, D. C. Christianson, S. S. Hubbard, and D. A. Agarwal, “BASIN-3D: A Brokering Framework to Integrate Diverse Environmental Data,” in review.

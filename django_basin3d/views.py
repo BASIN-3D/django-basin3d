@@ -16,6 +16,7 @@
 import logging
 import sys
 from collections import OrderedDict
+from typing import Dict
 
 from basin3d.core.schema.enum import FeatureTypeEnum
 from rest_framework.decorators import api_view
@@ -61,7 +62,7 @@ def monitoring_features_lists(request, format=format):
     """
     Generate list of URLs to views for monitoring features based on availability in datasource
     """
-    monitoring_features_list = {}
+    monitoring_features_list: Dict = {}
     supported_feature_types = FeatureTypeEnum.values()
     for datasource in DataSource.objects.all():
         viewset_models = []

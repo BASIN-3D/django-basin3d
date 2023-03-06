@@ -1,5 +1,4 @@
 import json
-import pytest
 
 from django.test import TestCase
 from rest_framework import status
@@ -231,16 +230,15 @@ class TestMeasurementTimeseriesTVPObservationAPI(TestCase):
                                 'type': 'value_error.date'}],
                     'success': False}
 
-
     def setUp(self):
         self.client = APIClient()
 
     def test_get(self):
         for query_string, expected_status, expected_output in [
-            ("monitoring_features=A-1&observed_property_variables=ACT&start_date=2020-01-01", 200, self.VALID_OUTPUT),
-            ("monitoring_features=A-1&observed_property_variables=ACT&start_date=1/1/2020", 400, self.ERROR_OUTPUT),
-            ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=2020-01-01", 200, self.VALID_OUTPUT),
-            ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=1/1/2020", 400, self.ERROR_OUTPUT)]:
+                ("monitoring_features=A-1&observed_property_variables=ACT&start_date=2020-01-01", 200, self.VALID_OUTPUT),
+                ("monitoring_features=A-1&observed_property_variables=ACT&start_date=1/1/2020", 400, self.ERROR_OUTPUT),
+                ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=2020-01-01", 200, self.VALID_OUTPUT),
+                ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=1/1/2020", 400, self.ERROR_OUTPUT)]:
 
             print(f"{query_string}")
             response = self.client.get(f'/measurement_tvp_timeseries/?{query_string}', format='json')

@@ -19,7 +19,7 @@ About Django Serializers:
     to native Python datatypes that can then be easily rendered into JSON, XML or other
     content types. Serializers also provide deserialization, allowing parsed data to be
     converted back into complex types, after first validating the incoming data.
-    *-- http://www.django-rest-framework.org/api-guide/serializers/*
+    *https://www.django-rest-framework.org/api-guide/serializers/*
 """
 from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, \
     DataSourceObservedPropertyVariable
@@ -29,7 +29,7 @@ from rest_framework import serializers
 
 class ChooseFieldsSerializerMixin(object):
     """
-    A serializer that  dynamically sets fields
+    A serializer that dynamically sets fields
     """
 
     def __init__(self, *args, **kwargs):
@@ -37,8 +37,8 @@ class ChooseFieldsSerializerMixin(object):
         # Instantiate the serializer superclass
         super(ChooseFieldsSerializerMixin, self).__init__(*args, **kwargs)
 
-        if 'request' in self.context:
-            self.handle_fields(self.context['request'])
+        if 'request' in self.context:  # type: ignore
+            self.handle_fields(self.context['request'])  # type: ignore
 
     def handle_fields(self, request=None):
         """
@@ -52,13 +52,13 @@ class ChooseFieldsSerializerMixin(object):
                 field_set = set(fields.split(","))
 
                 # Remove the fields not in the intersection
-                for field in set(self.fields.keys()).difference(field_set):
-                    self.fields.pop(field)
+                for field in set(self.fields.keys()).difference(field_set):  # type: ignore
+                    self.fields.pop(field)  # type: ignore
 
 
 class DelimitedListField(serializers.ListField):
     """
-    Convert a delemited string field to a list
+    Convert a delimited string field to a list
     """
 
     child = serializers.CharField()
@@ -78,9 +78,7 @@ class DelimitedListField(serializers.ListField):
 
 class DataSourceSerializer(serializers.HyperlinkedModelSerializer):
     """
-
     Data Source serializer that converts a models.DataSource
-
     """
 
     observed_property_variables = serializers.SerializerMethodField()
@@ -127,7 +125,6 @@ class DataSourceSerializer(serializers.HyperlinkedModelSerializer):
 class DataSourceObservedPropertyVariableSerializer(serializers.HyperlinkedModelSerializer):
     """
     Model that Serializes Mapped Data Source Parameters
-
     """
 
     class Meta:
@@ -138,7 +135,6 @@ class DataSourceObservedPropertyVariableSerializer(serializers.HyperlinkedModelS
 class ObservedPropertyVariableSerializer(serializers.HyperlinkedModelSerializer):
     """
     Observed Property Variable Serializer
-
     """
 
     categories = DelimitedListField()
@@ -168,7 +164,6 @@ class ObservedPropertyVariableSerializer(serializers.HyperlinkedModelSerializer)
 class ObservedPropertySerializer(serializers.HyperlinkedModelSerializer):
     """
     Observed Property Serializer
-
     """
 
     sampling_medium = serializers.SerializerMethodField()

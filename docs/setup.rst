@@ -19,7 +19,7 @@ Python environment for your Django project.
 
 Install a source distribution with pip::
 
-    $ pip install git+https://github.com/BASIN-3D/django-basin3d.git
+    $ pip install django-basin3d
 
 Make sure your installation was successful::
 
@@ -67,9 +67,9 @@ must be placed in `your-app/` directory along side `plugins.py`
 `basin3d_variables_hydrology.csv`
 .................................
 Hydrology variables have been defined in `basin3d`.  These  broker variables are in a comma separated values (csv)
-file named `basin3d_variables_hydrology.csv`_ and can be found in https://github.com/BASIN-3D/basin3d.
+file named `basin3d_variables_hydrology.csv`_ and can be found at https://github.com/BASIN-3D/basin3d.
 
-.. _basin3d_variables_hydrology.csv: https://github.com/BASIN-3D/basin3d/blob/main/basin3d/data/basin3d_variables_hydrology.csv
+.. _basin3d_variables_hydrology.csv: https://github.com/BASIN-3D/basin3d/blob/main/basin3d/data/basin3d_observed_property_vocabulary.csv
 
 
 `mapping_<plugin_name>.csv`

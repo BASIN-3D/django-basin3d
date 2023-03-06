@@ -49,17 +49,17 @@ def get_monitoring_feature_urls():
                     path_route = '^monitoringfeatures/{}s'.format(ft)
                     urls.extend([
                         re_path(r'{}/$'.format(path_route),
-                            MonitoringFeatureViewSet.as_view({'get': 'list'}),
-                            name='monitoringfeature-list'),
+                                MonitoringFeatureViewSet.as_view({'get': 'list'}),
+                                name='monitoringfeature-list'),
                         re_path(r'{}\.(?P<format>[a-z0-9]+)/?$'.format(path_route),
-                            MonitoringFeatureViewSet.as_view({'get': 'list'}),
-                            name='monitoringfeature-list'),
+                                MonitoringFeatureViewSet.as_view({'get': 'list'}),
+                                name='monitoringfeature-list'),
                         re_path(r'{}/(?P<pk>[^/.]+)/$'.format(path_route),
-                            MonitoringFeatureViewSet.as_view({'get': '{}s'.format(ft)}),
-                            name='monitoringfeature-{}s-detail'.format(ft)),
+                                MonitoringFeatureViewSet.as_view({'get': '{}s'.format(ft)}),
+                                name='monitoringfeature-{}s-detail'.format(ft)),
                         re_path(r'{}/(?P<pk>[^/.]+).(?P<format>[a-z0-9]+)/?'.format(path_route),
-                            MonitoringFeatureViewSet.as_view({'get': '{}s'.format(ft)}),
-                            name='monitoringfeature-{}s-detail'.format(ft))
+                                MonitoringFeatureViewSet.as_view({'get': '{}s'.format(ft)}),
+                                name='monitoringfeature-{}s-detail'.format(ft))
                     ])
                     supported_feature_types.remove(feature_type)
 
@@ -82,7 +82,7 @@ urlpatterns = [
 
     # Views to Dynamic Views
     re_path(r'^measurement_tvp_timeseries/$', MeasurementTimeseriesTVPObservationViewSet.as_view({"get": "list"}),
-        name='monitoring-features-list'),
+            name='monitoring-features-list'),
     re_path(r'^monitoringfeatures/$', monitoring_features_lists, name='monitoring-features-list'),
 ]
 

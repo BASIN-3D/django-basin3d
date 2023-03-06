@@ -53,13 +53,14 @@ copyright = '2020, The Regents of the University of California, through Lawrence
 author = 'Charuleka Varadharajan, Valerie Hendrix, Danielle Christianson'
 
 import os
+import re
 import sys
 
 import django
 
 # Get the version from git
 # The full version, including alpha/beta/rc tags.
-release = subprocess.check_output(["git", "describe", "--tags"]).rstrip().decode('utf-8')
+release = re.sub('^v', '', os.popen('git describe').read().strip())
 version = release.split("-")[0]
 
 sys.path.append('{}/../example-django'.format(os.path.dirname(__file__)))
@@ -403,3 +404,6 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
+
+# linkcheck ignore: example use case url and dois that redirect
+linkcheck_ignore = [r'http://127\.0\.0\.1:\d+/.*', r'https://dx\.doi\.org/.*']

@@ -1,9 +1,10 @@
-Welcome to BASIN-3D |release| documentation!
-============================================
+Welcome to Django BASIN-3D |release| documentation!
+===================================================
 
 .. toctree::
    intro
    setup
+   examples
    rest_api
    synthesis_models
    synthesis_views

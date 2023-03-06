@@ -1,8 +1,0 @@
-git+https://github.com/BASIN-3D/basin3d.git@0.2.0#egg=basin3d
-django>=4.0
-djangorestframework
-django-filter
-pyyaml
-requests
-markdown
-pygments

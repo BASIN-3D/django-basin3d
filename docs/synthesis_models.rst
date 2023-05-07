@@ -14,23 +14,18 @@ brokering service.
 .. automodule:: django_basin3d.synthesis
     :members:
     :inherited-members:
-    :show-inheritance:
 
 .. automodule:: django_basin3d.synthesis.serializers
     :members:
     :inherited-members:
-    :show-inheritance:
 
 .. automodule:: basin3d.core.models
     :members:
     :inherited-members:
-    :show-inheritance:
-
 
 .. automodule:: basin3d.core.types
     :members:
     :inherited-members:
-    :show-inheritance:
 
 
 

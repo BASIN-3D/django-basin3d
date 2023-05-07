@@ -19,7 +19,7 @@ maintainers = [
     { name = "Danielle Svehla Christianson", email = "dschristianson@lbl.gov" },
 ]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "License :: OSI Approved :: BSD License",
     "Intended Audience :: Science/Research",
@@ -55,7 +55,7 @@ docs = ['sphinx',
 
 [project.urls]
 homepage = "https://github.com/BASIN-3D/django-basin3d"
-documentation = "https://django-basin3d.readthedocs.io/"
+documentation = "https://django-basin3d.readthedocs.io"
 repository = "https://github.com/BASIN-3D"
 changelog = "https://github.com/BASIN-3D/django-basin3d/blob/main/CHANGES.md"
 

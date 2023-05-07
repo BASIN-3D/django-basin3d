@@ -11,6 +11,7 @@
 Serializers that render :py:mod:`basin3d.core.models` from Python objects to `JSON` and back again.
 
 """
+
 from basin3d.core.schema.enum import FeatureTypeEnum
 from numbers import Number
 

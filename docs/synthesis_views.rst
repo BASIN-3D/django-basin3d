@@ -14,15 +14,16 @@ brokering service.
 
 .. automodule:: django_basin3d.synthesis.viewsets
     :members:
-    :show-inheritance:
+    :undoc-members:
 
 .. automodule:: basin3d.core.synthesis
     :members:
-    :show-inheritance:
+    :undoc-members:
+    :noindex:
 
 .. automodule:: basin3d.core.plugin
     :members:
-    :show-inheritance:
+    :undoc-members:
 
 
 

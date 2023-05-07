@@ -24,11 +24,4 @@ Thus, users can retrieve data for a specific point location or river basin.
 Although Django BASIN-3D is a standalone application, users will need to create a custom broker application on top of BASIN-3D.
 The custom broker contains plugins to connect to the specific data sources of interest, and map the data source vocabularies to the BASIN-3D synthesis models.
 
-Readers can find out more about BASIN-3D and its application to the East River Watershed for the Watershed Function SFA at Hubbard et al. (2018), Hendrix et al. (2019), Varadharajan et al. in review (available upon request).
-
-References
-^^^^^^^^^^
-
-- Hubbard, S. S., K. H. Williams, D. Agarwal, J. Banfield, H. Beller, N. Bouskill, E. Brodie, R. Carroll, B. Dafflon, D. Dwivedi, N. Falco, B. Faybishenko, R. Maxwell, P. Nico, C. Steefel, H. Steltzer, T. Tokunaga, P. A. Tran, H. Wainwright, and C. Varadharajan. 2018. The East River, Colorado, Watershed: A Mountainous Community Testbed for Improving Predictive Understanding of Multiscale Hydrological–Biogeochemical Dynamics. Vadose Zone J. 17:180061. https://dx.doi.org/10.2136/vzj2018.03.0061
-- Hendrix,V.C., D.S. Christianson, S.S. Hubbard, D.A. Agarwal and C. Varadharajan, "BASIN-3D: Reducing the data processing burden for earth scientists", accepted to Gateways 2019.
-- Varadharajan C., V. Hendrix, D. C. Christianson, S. S. Hubbard, and D. A. Agarwal, “BASIN-3D: A Brokering Framework to Integrate Diverse Environmental Data,” in review.
+Readers can find out more about BASIN-3D and its application to the East River Watershed for the Watershed Function SFA at Hubbard et al. (2018), Hendrix et al. (2019), Varadharajan et al. (2022).

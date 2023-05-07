@@ -5,12 +5,12 @@ Examples
 
 Read more in the `Django tutorial <https://docs.djangoproject.com/en/4.0/intro/tutorial01/>`_ for creating an Django app. Change the tutorial version to match the Django version you are using.
 
-Example BASIN3D broker connecting to USGS data source
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Example BASIN-3D broker connecting to USGS data source
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this example, you will create an example BASIN3D broker and connect to
+In this example, you will create an example BASIN-3D broker and connect to
 the USGS Daily and Instantaneous Values service. The plugin to this USGS
-publicaly-available data source is bundled with core synthesis code in basin3d.
+publicly-available data source is bundled with core synthesis code in basin3d.
 
 1. Create a virtual environment with a supported python version and activate it.
 2. Install django-basin3d::

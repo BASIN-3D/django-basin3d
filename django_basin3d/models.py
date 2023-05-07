@@ -4,22 +4,13 @@
 
 .. currentmodule:: django_basin3d.models
 
-:synopsis: The BASIN-3D  Models
+:synopsis: The BASIN-3D Models
 :module author: Val Hendrix <vhendrix@lbl.gov>
 :module author: Danielle Svehla Christianson <dschristianson@lbl.gov>
-
-Below is the inheritance diagram for BASIN-3D generic models and supporting classes.  All of the models are based on
-:class:`django.db.models.Model` which provide the object relational mapping technology for building and managing
-relational database tables.
-
-.. inheritance-diagram:: django_basin3d.models
-    :top-classes: django.db.models.Model, django.db.models.fields.TextField
 
 .. contents:: Contents
     :local:
     :backlinks: top
-
-
 
 """
 from __future__ import unicode_literals

@@ -12,7 +12,7 @@ To utilize django-basin3d in a custom app, install the source distribution with 
     $ pip install django-basin3d
     
 ### Example use
-See [django-basin3d Example documentation](https://basin3d.readthedocs.io/projects/django-basin3d/en/latest/index.html) for an example of configuring an application to access USGS Daily and Instantaneous Values.
+See [django-basin3d Example documentation](https://basin3d.readthedocs.io/projects/django-basin3d/en/stable/index.html) for an example of configuring an application to access USGS Daily and Instantaneous Values.
 
 ## Authors
 * **Charuleka Varadharajan** - [LBL](http://eesa.lbl.gov/profiles/charuleka-varadharajan/)
@@ -38,7 +38,7 @@ works, and perform publicly and display publicly, and to permit other to do
 so.
 
 ## License
-See [LICENSE](LICENSE) file for licensing details
+See [LICENSE](https://basin3d.readthedocs.io/projects/django-basin3d/en/stable/license_agreement.html) file for licensing details
 
 ## Acknowledgments
 This research is supported as part of the Watershed Function Scientific Focus Area funded by the U.S. Department of Energy, Office of Science, Office of Biological and Environmental Research under Award no. DE-AC02-05CH11231. This research used resources of the National Energy Research Scientific Computing Center (NERSC), U.S. Department of Energy Office of Science User Facility operated under Contract No. DE-AC02-05CH11231. 

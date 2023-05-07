@@ -8,15 +8,9 @@
 :module author: Val Hendrix <vhendrix@lbl.gov>
 :module author: Danielle Svehla Christianson <dschristianson@lbl.gov>
 
-Below is the inheritance diagram for Django BASIN-3D catalog.
-
-.. inheritance-diagram:: django_basin3d.catalog
-
 .. contents:: Contents
     :local:
     :backlinks: top
-
-
 
 """
 import importlib

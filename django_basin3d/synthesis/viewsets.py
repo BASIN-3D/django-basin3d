@@ -8,17 +8,6 @@
 :module author: Val Hendrix <vhendrix@lbl.gov>
 :module author: Danielle Svehla Christianson <dschristianson@lbl.gov>
 
-
-Below is the inheritance diagram for BASIN-3D Viewsets.  All of the views are based on
-:class:`DataSourcePluginViewSet` which provide all the synthesis logic for viewing data
-from the connected data sources.
-
-.. inheritance-diagram:: django_basin3d.synthesis.viewsets
-    :top-classes: django_basin3d.synthesis.viewsets.DataSourcePluginViewSet
-    :parts: 2
-
-----------------------------------
-
 """
 import logging
 
@@ -60,12 +49,10 @@ def get_request_feature_type(request):
 
 class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
     """
-    Base ViewsSet for all DataSource plugins.  The inheritance diagram shows that this class extends the
+    Base ViewsSet for all DataSource plugins.  This class extends the
     `Django Rest Framework <https://www.django-rest-framework.org/>`_
     class :class:`rest_framework.viewsets.ViewSet`. These are based on `Django generic views
     <https://docs.djangoproject.com/en/2.2/topics/class-based-views/generic-display/>`_.
-
-    .. inheritance-diagram:: rest_framework.viewsets.ViewSet django_basin3d.synthesis.viewsets.DataSourcePluginViewSet
 
     """
     versioning_class = versioning.NamespaceVersioning

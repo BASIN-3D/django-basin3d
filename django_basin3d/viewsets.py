@@ -13,12 +13,6 @@
     :local:
     :backlinks: top
 
-Below is the inheritance diagram for BASIN-3D Viewsets.  All of the views are based on viewsets from
-:class:`rest_framework.viewsets` which provide functionality for controlling access to the REST API.
-
-.. inheritance-diagram:: django_basin3d.viewsets
-    :top-classes: rest_framework.viewsets.GenericViewSet, rest_framework.viewsets.ReadOnlyModelViewSet
-
 
 """
 import logging

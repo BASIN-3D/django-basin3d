@@ -1,4 +1,4 @@
-# BASIN-3D Releases
+# Django BASIN-3D Releases
 
 
 

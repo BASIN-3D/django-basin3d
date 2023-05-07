@@ -10,10 +10,8 @@
 :module author: Charuleka Varadharajan <cvaradharajan@lbl.gov>
 
 
-* :py:mod:`~django_basin3d.synthesis.models` - defines the synthesis domain models that are brokered and synthesized by the custom :class:`~django_basin3d.plugins.DataSourcePluginPoint`.
+* :py:mod:`~django_basin3d.synthesis.serializers` - Serializers that render :py:mod:`basin3d.core.models` from Python objects to `JSON` and back again.
 * :py:mod:`~django_basin3d.synthesis.viewsets` - Controllers for BASIN-3D REST api
-
-
 
 """
 from . import serializers

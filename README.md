@@ -14,6 +14,9 @@ To utilize django-basin3d in a custom app, install the source distribution with 
 ### Example use
 See [django-basin3d Example documentation](https://basin3d.readthedocs.io/projects/django-basin3d/en/stable/index.html) for an example of configuring an application to access USGS Daily and Instantaneous Values.
 
+## Changelog
+See the [changelog](https://basin3d.readthedocs.io/projects/django-basin3d/en/stable/changelog.html) for a history of updates and changes to django-basin3d.
+
 ## Authors
 * **Charuleka Varadharajan** - [LBL](http://eesa.lbl.gov/profiles/charuleka-varadharajan/)
 * **Valerie Hendrix**  - [LBL](https://crd.lbl.gov/departments/data-science-and-technology/uss/staff/valerie-hendrix)

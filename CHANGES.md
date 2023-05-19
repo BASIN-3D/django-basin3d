@@ -1,6 +1,9 @@
 # Django BASIN-3D Releases
 
+## v3.1.0 (Beta)
+This release contains modernization of the build system for distribution on pypi.
 
++ Issue #31 - Modernize build system
 
 ## v3.0.1 (Bug Fix)
 This release contains a single bug fix

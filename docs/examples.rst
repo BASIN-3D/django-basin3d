@@ -138,33 +138,34 @@ The Broker API root view will be rendered with the following index.
 .. code-block::
 
     {
-        "datasources": "http://127.0.0.1:8000/datasources/",
-        "observedpropertyvariables": "http://127.0.0.1:8000/observedpropertyvariables/",
+        "datasource": "http://127.0.0.1:8000/datasource/",
+        "attributemapping": "http://127.0.0.1:8000/attributemapping/",
         "observedproperty": "http://127.0.0.1:8000/observedproperty/",
         "measurementtvptimeseries": "http://127.0.0.1:8000/measurement_tvp_timeseries/",
-        "monitoringfeatures": "http://127.0.0.1:8000/monitoringfeatures/"
+        "monitoringfeature": "http://127.0.0.1:8000/monitoringfeature/"
     }
 
 12. Confirm that the connection to USGS is working using the following queries.
 
 View the USGS datasource:
-http://127.0.0.1:8000/datasources/
+http://127.0.0.1:8000/datasource/
 
 .. code-block::
 
     [
         {
-            "url": "http://127.0.0.1:8000/datasources/1/",
+            "url": "http://127.0.0.1:8000/datasource/USGS/",
             "name": "USGS",
             "location": "https://waterservices.usgs.gov/nwis/",
             "id_prefix": "USGS",
-            "observed_property_variables": "http://127.0.0.1:8000/datasources/1/observed_property_variables/",
-            "check": "http://127.0.0.1:8000/datasources/1/check/"
+            "attribute_mapping": "http://127.0.0.1:8000/datasource/USGS/attribute_mapping/",
+            "observed_property": "http://127.0.0.1:8000/datasource/USGS/observed_property/",
+            "check": "http://127.0.0.1:8000/datasource/USGS/check/"
         }
     ]
 
 View the USGS monitoring feature regions:
-http://127.0.0.1:8000/monitoringfeatures/regions/
+http://127.0.0.1:8000/monitoringfeature/regions/
 
 .. code-block::
 
@@ -178,21 +179,21 @@ http://127.0.0.1:8000/monitoringfeatures/regions/
                 "name": "New England",
                 "description": "REGION: New England",
                 "feature_type": "REGION",
-                "observed_property_variables": null,
+                "observed_properties": [],
                 "related_sampling_feature_complex": [],
                 "shape": "SURFACE",
                 "coordinates": null,
                 "description_reference": null,
                 "related_party": [],
                 "utc_offset": null,
-                "url": "http://127.0.0.1:8000/monitoringfeatures/regions/USGS-01/"
+                "url": "http://127.0.0.1:8000/monitoringfeature/regions/USGS-01/"
             },
             ...
         ]
     }
 
 Try a query of USGS point monitoring features for a specific subbasin:
-http://127.0.0.1:8000/monitoringfeatures/points/?datasource=USGS&parent_features=USGS-14020001
+http://127.0.0.1:8000/monitoringfeature/points/?datasource=USGS&parent_feature=USGS-14020001
 
 .. code-block::
 
@@ -202,27 +203,72 @@ http://127.0.0.1:8000/monitoringfeatures/points/?datasource=USGS&parent_features
                 "USGS"
             ],
             "feature_type": "POINT",
-            "parent_features": [
+            "parent_feature": [
                 "USGS-14020001"
             ]
         },
         "data": [
             {
+            "id": "USGS-09106800",
+            "name": "TAYLOR RIVER ABOVE TRAIL CREEK NR TAYLOR PARK, CO",
+            "description": null,
+            "feature_type": "POINT",
+            "observed_properties": [],
+            "related_sampling_feature_complex": [
+                {
+                    "related_sampling_feature": "USGS-14020001",
+                    "related_sampling_feature_type": "SUBBASIN",
+                    "role": "PARENT",
+                    "url": "http://127.0.0.1:8000/monitoringfeature/subbasins/USGS-14020001/"
+                }
+            ],
+            "shape": "POINT",
+            "coordinates": {
+                "absolute": {
+                    "horizontal_position": [
+                        {
+                            "x": -106.6009444,
+                            "y": 38.92469444,
+                            "datum": "NAD83",
+                            "type": "GEOGRAPHIC",
+                            "latitude": 38.92469444,
+                            "longitude": -106.6009444,
+                            "units": "DD"
+                        }
+                    ],
+                    "vertical_extent": [
+                        {
+                            "value": 9681.31,
+                            "resolution": 0.14,
+                            "distance_units": null,
+                            "datum": "NAVD88",
+                            "type": "ALTITUDE"
+                        }
+                    ]
+                },
+                "representative": null
+            },
+            "description_reference": null,
+            "related_party": [],
+            "utc_offset": null,
+            "url": "http://127.0.0.1:8000/monitoringfeature/points/USGS-09106800/"
+            },
+            {
                 "id": "USGS-09107000",
                 "name": "TAYLOR RIVER AT TAYLOR PARK, CO.",
                 "description": null,
                 "feature_type": "POINT",
-                "observed_property_variables": [
+                "observed_properties": [
                     "RDC",
-                    "WT",
-                    "SC"
+                    "SC",
+                    "WT"
                 ],
                 "related_sampling_feature_complex": [
                     {
                         "related_sampling_feature": "USGS-14020001",
                         "related_sampling_feature_type": "SUBBASIN",
                         "role": "PARENT",
-                        "url": "http://127.0.0.1:8000/monitoringfeatures/subbasins/USGS-14020001/"
+                        "url": "http://127.0.0.1:8000/monitoringfeature/subbasins/USGS-14020001/"
                     }
                 ],
                 "shape": "POINT",
@@ -254,26 +300,27 @@ http://127.0.0.1:8000/monitoringfeatures/points/?datasource=USGS&parent_features
                 "description_reference": null,
                 "related_party": [],
                 "utc_offset": null,
-                "url": "http://127.0.0.1:8000/monitoringfeatures/points/USGS-09107000/"
+                "url": "http://127.0.0.1:8000/monitoringfeature/points/USGS-09107000/"
             },
             ...
         ]
     }
 
 Try a USGS timeseries data query:
-http://127.0.0.1:8000/measurement_tvp_timeseries/?monitoring_features=USGS-09107000&observed_property_variables=RDC&start_date=2000-01-01&end_date=2000-03-01
+http://127.0.0.1:8000/measurement_tvp_timeseries/?monitoring_feature=USGS-09107000&observed_property=RDC&start_date=2000-01-01&end_date=2000-03-01
 
 .. code-block::
 
     {
         "query": {
-            "monitoring_features": [
+            "monitoring_feature": [
                 "USGS-09107000"
             ],
-            "observed_property_variables": [
+            "observed_property": [
                 "RDC"
             ],
             "start_date": "2000-01-01",
+            "aggregation_duration": "DAY",
             "end_date": "2000-03-01"
         },
         "data": [
@@ -281,42 +328,55 @@ http://127.0.0.1:8000/measurement_tvp_timeseries/?monitoring_features=USGS-09107
                 "aggregation_duration": "DAY",
                 "time_reference_position": "MIDDLE",
                 "statistic": "MEAN",
-                "result_points": [
-                    [
-                        "2000-01-01T00:00:00.000",
-                        1.1043570329999999
+                "result": {
+                    "value": [
+                        [
+                            "2000-01-01T00:00:00.000",
+                            1.1043570329999999
+                        ],
+                        [
+                            "2000-01-02T00:00:00.000",
+                            1.076040186
+                        ],
+                        [
+                            "2000-01-03T00:00:00.000",
+                            1.047723339
+                        ],
+                        ...
                     ],
-                    [
-                        "2000-01-02T00:00:00.000",
-                        1.076040186
-                    ],
-                    [
-                        "2000-01-03T00:00:00.000",
-                        1.047723339
-                    ],
-                    ...
-                ],
+                    "result_quality" [
+                        "VALIDATED",
+                        "VALIDATED",
+                        "VALIDATED"
+                        ...
+                    ]
+                },
                 "unit_of_measurement": "m^3/s",
+                "datasource": "http://127.0.0.1:8000/datasource/USGS/"
                 "id": "USGS-09107000",
                 "type": "MEASUREMENT_TVP_TIMESERIES",
                 "utc_offset": -7,
                 "phenomenon_time": null,
-                "observed_property_variable": "RDC",
-                "result_quality": "CHECKED",
+                "observed_property": "RDC",
+                "result_quality": [
+                    "VALIDATED"
+                ],
                 "feature_of_interest": {
                     "id": "USGS-09107000",
                     "name": "TAYLOR RIVER AT TAYLOR PARK, CO.",
                     "description": null,
                     "feature_type": "POINT",
-                    "observed_property_variables": [
-                        "Find observed property variables at monitoring feature url"
+                    "observed_properties": [
+                        "RDC",
+                        "SC",
+                        "WT"
                     ],
                     "related_sampling_feature_complex": [
                         {
                             "related_sampling_feature": "USGS-14020001",
                             "related_sampling_feature_type": "SUBBASIN",
                             "role": "PARENT",
-                            "url": "http://127.0.0.1:8000/monitoringfeatures/subbasins/USGS-14020001/"
+                            "url": "http://127.0.0.1:8000/monitoringfeature/subbasins/USGS-14020001/"
                         }
                     ],
                     "shape": "POINT",
@@ -348,7 +408,7 @@ http://127.0.0.1:8000/measurement_tvp_timeseries/?monitoring_features=USGS-09107
                     "description_reference": null,
                     "related_party": [],
                     "utc_offset": null,
-                    "url": "http://127.0.0.1:8000/monitoringfeatures/points/USGS-09107000/"
+                    "url": "http://127.0.0.1:8000/monitoringfeature/points/USGS-09107000/",
                 },
                 "feature_of_interest_type": "POINT"
             }

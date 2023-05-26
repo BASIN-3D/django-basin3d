@@ -1,5 +1,4 @@
-from django_basin3d.models import DataSource, \
-    ObservedProperty, ObservedPropertyVariable, DataSourceObservedPropertyVariable
+from django_basin3d.models import AttributeMapping, DataSource, ObservedProperty
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 
@@ -12,21 +11,13 @@ class DataSourceAdmin(ModelAdmin):
     actions = None
 
 
-@admin.register(ObservedPropertyVariable)
-class ObservedPropertyVariableAdmin(ModelAdmin):
-    list_display = ('basin3d_id', 'full_name', 'categories')
+@admin.register(ObservedProperty)
+class ObservedPropertyAdmin(ModelAdmin):
+    list_display = ('basin3d_vocab', 'full_name', 'categories', 'units')
 
     actions = None
 
 
-@admin.register(DataSourceObservedPropertyVariable)
-class DataSourceObservedPropertyVariableAdmin(ModelAdmin):
-    list_display = ('name', 'datasource', 'observed_property_variable')
-    list_filter = ('datasource', 'observed_property_variable')
-
-
-@admin.register(ObservedProperty)
-class ObservedPropertyAdmin(ModelAdmin):
-    list_display = ('observed_property_variable', 'datasource', 'sampling_medium')
-    readonly_fields = ('datasource', 'observed_property_variable')
-    list_filter = ('datasource', 'sampling_medium')
+@admin.register(AttributeMapping)
+class AttributeMappingAdmin(ModelAdmin):
+    list_display = ('attr_type', 'basin3d_vocab', 'basin3d_desc', 'datasource_vocab', 'datasource_desc', 'datasource')

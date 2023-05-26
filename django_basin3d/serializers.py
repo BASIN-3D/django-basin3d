@@ -19,9 +19,8 @@ About Django Serializers:
     converted back into complex types, after first validating the incoming data.
     https://www.django-rest-framework.org/api-guide/serializers/
 """
-from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, \
-    DataSourceObservedPropertyVariable
-from rest_framework import reverse
+from django_basin3d.models import DataSource, ObservedProperty, AttributeMapping
+from rest_framework.reverse import reverse
 from rest_framework import serializers
 
 
@@ -79,24 +78,49 @@ class DataSourceSerializer(serializers.HyperlinkedModelSerializer):
     Data Source serializer that converts a models.DataSource
     """
 
-    observed_property_variables = serializers.SerializerMethodField()
+    url = serializers.SerializerMethodField()
+    attribute_mapping = serializers.SerializerMethodField()
+    observed_property = serializers.SerializerMethodField()
     check = serializers.SerializerMethodField()
 
-    def get_observed_property_variables(self, obj):
+    def get_url(self, obj):
         """
-        Return the url for the observed property variables associated with the current datasource
+
+        :param obj:
+        :return:
+        """
+        url_kwargs = {'id_prefix': obj.id_prefix, }
+        return "{}".format(reverse('datasource-detail', kwargs=url_kwargs, request=self.context["request"], ))
+
+    def get_attribute_mapping(self, obj):
+        """
+        Return the url for the attribute mapping associated with the current datasource
         :param obj:
         :return:
         """
         format = None
         if "format" in self.context["request"].query_params:
             format = self.context["request"].query_params["format"]
-        url_kwargs = {
-            "pk": obj.id,
-        }
-        return reverse.reverse("{}-observed-property-variables".format(obj.__class__.__name__.lower()),
-                               kwargs=url_kwargs,
-                               request=self.context["request"], format=format)
+
+        url_kwargs = {"id_prefix": obj.id_prefix, }
+
+        return reverse("{}-attribute-mapping".format(obj.__class__.__name__.lower()), kwargs=url_kwargs,
+                       request=self.context["request"], format=format)
+
+    def get_observed_property(self, obj):
+        """
+        Return the url for the observed property associated with the current datasource
+        :param obj:
+        :return:
+        """
+        format = None
+        if "format" in self.context["request"].query_params:
+            format = self.context["request"].query_params["format"]
+
+        url_kwargs = {"id_prefix": obj.id_prefix, }
+
+        return reverse("{}-observed-property".format(obj.__class__.__name__.lower()), kwargs=url_kwargs,
+                       request=self.context["request"], format=format)
 
     def get_check(self, obj):
         """
@@ -104,59 +128,17 @@ class DataSourceSerializer(serializers.HyperlinkedModelSerializer):
         :param obj:
         :return:
         """
-        url_kwargs = {
-            'pk': obj.id,
-        }
-        return "{}check/".format(reverse.reverse('datasource-detail', kwargs=url_kwargs,
-                                                 request=self.context["request"], ))
+        url_kwargs = {'id_prefix': obj.id_prefix, }
+        return "{}check/".format(reverse('datasource-detail', kwargs=url_kwargs, request=self.context["request"], ))
 
     class Meta:
         model = DataSource
         depth = 1
         fields = ('url', 'name', 'location', 'id_prefix',
-                  'observed_property_variables', 'check')
+                  'attribute_mapping', 'observed_property', 'check')
         read_only_fields = ('name', 'location', 'id_prefix',
-                            'observed_property_variables', 'check')
+                            'attribute_mapping', 'observed_property', 'check')
         lookup_field = 'name'
-
-
-class DataSourceObservedPropertyVariableSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    Model that Serializes Mapped Data Source Parameters
-    """
-
-    class Meta:
-        model = DataSourceObservedPropertyVariable
-        fields = ('id', 'name', 'datasource', 'observed_property_variable')
-
-
-class ObservedPropertyVariableSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    Observed Property Variable Serializer
-    """
-
-    categories = DelimitedListField()
-    datasources = serializers.SerializerMethodField()
-
-    def get_datasources(self, obj):
-        """
-        Return the url for the data sources associated with the current variable
-        :param obj:
-        :return:
-        """
-        format = None
-        if "format" in self.context["request"].query_params:
-            format = self.context["request"].query_params["format"]
-        url_kwargs = {
-            "pk": obj.basin3d_id,
-        }
-        return reverse.reverse("{}-datasources".format(obj.__class__.__name__.lower()), kwargs=url_kwargs,
-                               request=self.context["request"], format=format)
-
-    class Meta:
-        model = ObservedPropertyVariable
-        depth = 2
-        fields = ('url', 'basin3d_id', 'full_name', 'categories', 'datasources')
 
 
 class ObservedPropertySerializer(serializers.HyperlinkedModelSerializer):
@@ -164,20 +146,43 @@ class ObservedPropertySerializer(serializers.HyperlinkedModelSerializer):
     Observed Property Serializer
     """
 
-    sampling_medium = serializers.SerializerMethodField()
-    datasource = serializers.SerializerMethodField()
-    observed_property_variable = serializers.SerializerMethodField()
+    categories = DelimitedListField()
 
-    def get_sampling_medium(self, obj):
-        return obj.sampling_medium.name
-
-    def get_datasource(self, obj):
-        return obj.datasource.name
-
-    def get_observed_property_variable(self, obj):
-        return obj.observed_property_variable.basin3d_id
+    def get_categories(self, obj):
+        return obj.categories
 
     class Meta:
         model = ObservedProperty
         depth = 2
-        fields = '__all__'
+        fields = ('url', 'basin3d_vocab', 'full_name', 'categories', 'units')
+
+
+class AttributeMappingSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Attribute Mapping Serializer
+    """
+
+    datasource = serializers.SerializerMethodField()
+    basin3d_desc = serializers.SerializerMethodField()
+
+    def get_datasource(self, obj):
+        """
+        Return the url for the data sources associated with the current variable
+        :param obj:
+        :return:
+        """
+        url_kwargs = {'id_prefix': obj.datasource.id_prefix, }
+        return "{}".format(reverse('datasource-detail', kwargs=url_kwargs, request=self.context["request"], ))
+
+    def get_basin3d_desc(self, obj):
+        """
+        Return a list of str for enum and url for observed properties
+        :param obj:
+        :return:
+        """
+        return obj.basin3d_desc
+
+    class Meta:
+        model = AttributeMapping
+        depth = 2
+        fields = ('url', 'attr_type', 'basin3d_vocab', 'basin3d_desc', 'datasource_vocab', 'datasource_desc', 'datasource')

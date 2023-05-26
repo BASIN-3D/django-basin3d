@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import logging
 from basin3d.core.schema.enum import FeatureTypeEnum
 from django.urls import re_path
 from django.urls import include
@@ -21,7 +22,9 @@ from rest_framework import routers
 from django_basin3d.models import DataSource
 from django_basin3d.synthesis.viewsets import MeasurementTimeseriesTVPObservationViewSet, MonitoringFeatureViewSet
 from django_basin3d.views import broker_api_root, monitoring_features_lists
-from django_basin3d.viewsets import DataSourceViewSet, ObservedPropertyVariableViewSet, ObservedPropertyViewSet
+from django_basin3d.viewsets import AttributeMappingViewSet, DataSourceViewSet, ObservedPropertyViewSet
+
+logger = logging.getLogger(__name__)
 
 
 def get_monitoring_feature_urls():
@@ -46,7 +49,7 @@ def get_monitoring_feature_urls():
             for feature_type in datasource_feature_types:
                 if feature_type in supported_feature_types:
                     ft = ''.join(feature_type.lower().split())
-                    path_route = '^monitoringfeatures/{}s'.format(ft)
+                    path_route = '^monitoringfeature/{}s'.format(ft)
                     urls.extend([
                         re_path(r'{}/$'.format(path_route),
                                 MonitoringFeatureViewSet.as_view({'get': 'list'}),
@@ -64,15 +67,14 @@ def get_monitoring_feature_urls():
                     supported_feature_types.remove(feature_type)
 
     except Exception as e:
-        print(e)
+        logger.error(e)
     return urls
 
 
 # Wire up our API using automatic URL routing.
 router = routers.DefaultRouter()
-router.register(r'datasources', DataSourceViewSet, basename='datasource')
-router.register(r'observedpropertyvariables', ObservedPropertyVariableViewSet,
-                basename='observedpropertyvariable')
+router.register(r'datasource', DataSourceViewSet, basename='datasource')
+router.register(r'attributemapping', AttributeMappingViewSet, basename='attributemapping')
 router.register(r'observedproperty', ObservedPropertyViewSet, basename='observedproperty')
 
 # Additionally, we include login URLs for the browsable API.
@@ -83,7 +85,7 @@ urlpatterns = [
     # Views to Dynamic Views
     re_path(r'^measurement_tvp_timeseries/$', MeasurementTimeseriesTVPObservationViewSet.as_view({"get": "list"}),
             name='monitoring-features-list'),
-    re_path(r'^monitoringfeatures/$', monitoring_features_lists, name='monitoring-features-list'),
+    re_path(r'^monitoringfeature/$', monitoring_features_lists, name='monitoring-features-list'),
 ]
 
 urlpatterns.extend(get_monitoring_feature_urls())

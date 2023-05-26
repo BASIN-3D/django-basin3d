@@ -64,21 +64,21 @@ Implement Data Source plugins
 Create one or more plugins in a plugins module in `your-app/plugins.py`. The following files
 must be placed in `your-app/` directory along side `plugins.py`
 
-`basin3d_variables_hydrology.csv`
+`basin3d_observed_property_vocabulary.csv`
 .................................
 Hydrology variables have been defined in `basin3d`.  These  broker variables are in a comma separated values (csv)
-file named `basin3d_variables_hydrology.csv`_ and can be found at https://github.com/BASIN-3D/basin3d.
+file named `basin3d_observed_property_vocabulary.csv`_ and can be found at https://github.com/BASIN-3D/basin3d.
 
-.. _basin3d_variables_hydrology.csv: https://github.com/BASIN-3D/basin3d/blob/main/basin3d/data/basin3d_observed_property_vocabulary.csv
+.. _basin3d_observed_property_vocabulary: https://github.com/BASIN-3D/basin3d/blob/main/basin3d/data/basin3d_observed_property_vocabulary.csv
 
 
-`mapping_<plugin_name>.csv`
+`<plugin_name>_mapping.csv`
 ...........................
 Map your measurement variables for your plugin variables. The name of the file should be
-`mapping_<plugin_name>.csv`. This file must be placed this in `your-app/` directory
-(e.g `your-app/mapping_alpha.csv`) .
+`<plugin_name>_mapping.csv`. This file must be placed this in `your-app/` directory
+(e.g `your-app/alpha_mapping.csv`) .
 
-.. literalinclude:: ../example-django/mybroker/mapping_alpha.csv
+.. literalinclude:: ../example-django/mybroker/alpha_mapping.csv
 
 
 Extend the broker source plugin with the described attributes. The following example is from ~example-django/mybroker/plugins.py.

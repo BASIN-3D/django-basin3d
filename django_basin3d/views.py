@@ -14,7 +14,6 @@
     :backlinks: top
 """
 import logging
-import sys
 from collections import OrderedDict
 from typing import Dict
 
@@ -34,10 +33,9 @@ def broker_api_root(request, format=None):
     """
 
     # auto generated views from viewsets
-    views = [('datasources', 'datasource-list'),
-             ('observedpropertyvariables', 'observedpropertyvariable-list'),
+    views = [('datasource', 'datasource-list'),
+             ('attributemapping', 'attributemapping-list'),
              ('observedproperty', 'observedproperty-list'),
-             ('measurementtvptimeseries', 'measurementtvptimeseries-list'),
              ]
     root_dict = OrderedDict()
     # Iterate over the possible views. If they are enabled add them to the
@@ -47,13 +45,13 @@ def broker_api_root(request, format=None):
             root_dict[k] = reverse(v, request=request, format=format)
         except NoReverseMatch:
             # If there is no match just don't show it
-            print("NoReversMatch for {}".format(k), file=sys.stderr)
+            logger.error("NoReversMatch for {}".format(k))
 
     root_dict['measurementtvptimeseries'] = \
         '{}://{}/measurement_tvp_timeseries/'.format(request.scheme, request.get_host())
 
-    root_dict['monitoringfeatures'] = \
-        '{}://{}/monitoringfeatures/'.format(request.scheme, request.get_host())
+    root_dict['monitoringfeature'] = \
+        '{}://{}/monitoringfeature/'.format(request.scheme, request.get_host())
     return Response(root_dict)
 
 
@@ -79,7 +77,7 @@ def monitoring_features_lists(request, format=format):
                 ft = ''.join(feature_type.lower().split())
                 if ft not in monitoring_features_list.keys():
                     monitoring_features_list['{}s'.format(ft)] = \
-                        '{}://{}/monitoringfeatures/{}s/'.format(
+                        '{}://{}/monitoringfeature/{}s/'.format(
                         request.scheme, request.get_host(), ft)
             elif feature_type not in unsupported_feature_types:
                 unsupported_feature_types.append(feature_type)

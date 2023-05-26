@@ -1,14 +1,14 @@
 import json
-from basin3d.core.schema.enum import FeatureTypeEnum, ResultQualityEnum, TimeFrequencyEnum
+from basin3d.core.schema.enum import FeatureTypeEnum
 from basin3d.core.types import SpatialSamplingShapes
 
 from django.test import TestCase
 from rest_framework.renderers import JSONRenderer
 
 from basin3d.core import models
-from basin3d.core.models import MeasurementTimeseriesTVPObservation
-from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, SamplingMedium
-from django_basin3d.serializers import ObservedPropertySerializer
+from basin3d.core.models import MeasurementTimeseriesTVPObservation, ResultListTVP
+from django_basin3d.models import AttributeMapping, DataSource, ObservedProperty
+from django_basin3d.serializers import ObservedPropertySerializer, AttributeMappingSerializer
 from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObservationSerializer, \
     MonitoringFeatureSerializer
 
@@ -16,20 +16,21 @@ from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObserva
 class Basin3DSerializerTests(TestCase):
     def setUp(self):
         self.datasource = DataSource.objects.get(name="Alpha")
+        self.desc = [{
+            'basin3d_vocab': 'FOO',
+            'full_name': 'Acetate (CH3COO)',
+            'categories': ['Biogeochemistry', 'Anions'],
+            'units': 'mM'},
+            'WATER']
         self.plugin_access = self.datasource.get_plugin().get_plugin_access()[MeasurementTimeseriesTVPObservation]
-        self.observed_property_var = ObservedPropertyVariable(
-            basin3d_id="ACT", full_name="Acetate (CH3COO)",
-            categories="Hydrology,Subsurface")
-        self.sampling_medium = SamplingMedium(name="WATER")
         self.maxDiff = None
 
     def test_observed_property_serializer(self):
         """ Test Observed Property Serialization"""
 
-        obj = ObservedProperty(description="Acetate (CH3COO)",
-                               observed_property_variable=self.observed_property_var,
-                               sampling_medium=self.sampling_medium,
-                               datasource=self.datasource)
+        obj = ObservedProperty(
+             basin3d_vocab="FOO", full_name="Foo (foo)",
+             categories="F,f", units='ff')
 
         # important if the serializer uses any query_params this won't work
         #   b/c the django test request does not return a django request
@@ -37,11 +38,40 @@ class Basin3DSerializerTests(TestCase):
 
         json_obj = JSONRenderer().render(s.data)
         self.assertEqual(json.loads(json_obj.decode('utf-8')),
-                         {"url": None,
-                          "sampling_medium": "WATER",
-                          "datasource": "Alpha",
-                          "observed_property_variable": "ACT",
-                          "description": "Acetate (CH3COO)"})
+                         {"url": "/observedproperty/FOO/",
+                          "basin3d_vocab": "FOO",
+                          "full_name": "Foo (foo)",
+                          "categories": ["F", "f"],
+                          "units": "ff"})
+
+    def test_attribute_mapping_serializer(self):
+
+        obj = AttributeMapping(attr_type='OBSERVED_PROPERTY:SAMPLING_MEDIUM',
+                               basin3d_vocab='ACT:WATER',
+                               basin3d_desc=self.desc,
+                               datasource_vocab='FOO',
+                               datasource_desc='FOO desc',
+                               datasource=self.datasource)
+
+        # important if the serializer uses any query_params this won't work
+        #   b/c the django test request does not return a django request
+        s = AttributeMappingSerializer(obj, context={'request': None})
+
+        json_obj = JSONRenderer().render(s.data)
+        self.assertEqual(json.loads(json_obj.decode('utf-8')),
+                         {
+                             "url": None,
+                             "attr_type": "OBSERVED_PROPERTY:SAMPLING_MEDIUM",
+                             "basin3d_vocab": "ACT:WATER",
+                             "basin3d_desc": [{'basin3d_vocab': 'FOO',
+                                               'full_name': 'Acetate (CH3COO)',
+                                               'categories': ['Biogeochemistry', 'Anions'],
+                                               'units': 'mM'},
+                                              'WATER'],
+                             "datasource_vocab": "FOO",
+                             "datasource_desc": "FOO desc",
+                             "datasource": "/datasource/A/"
+                         })
 
 
 class SynthesisSerializerTests(TestCase):
@@ -103,7 +133,7 @@ class SynthesisSerializerTests(TestCase):
              "related_sampling_feature_complex": [],
              "url": None,
              "utc_offset": None,
-             "observed_property_variables": None
+             "observed_properties": []
              }
         )
 
@@ -131,7 +161,7 @@ class SynthesisSerializerTests(TestCase):
                         distance_units=models.VerticalCoordinate.DISTANCE_UNITS_METERS)
                 )
             ),
-            observed_property_variables=["Ag", "Acetate"],
+            observed_properties=["Ag", "Acetate"],
             related_sampling_feature_complex=[
                 models.RelatedSamplingFeature(plugin_access=self.plugin_access,
                                               related_sampling_feature="Region1",
@@ -168,7 +198,7 @@ class SynthesisSerializerTests(TestCase):
                  }
              },
              "description_reference": None,
-             "observed_property_variables": ["ACT", "Ag"],
+             "observed_properties": ["ACT", "Ag"],
              "related_party": [],
              "url": None,
              "utc_offset": None,
@@ -187,7 +217,7 @@ class SynthesisSerializerTests(TestCase):
             id="timeseries01",
             utc_offset="9",
             phenomenon_time="2018-11-07T15:28:20",
-            result_quality=ResultQualityEnum.CHECKED,
+            result_quality=["VALIDATED"],
             feature_of_interest=models.MonitoringFeature(
                 plugin_access=self.plugin_access,
                 id="1",
@@ -212,7 +242,7 @@ class SynthesisSerializerTests(TestCase):
                             distance_units=models.VerticalCoordinate.DISTANCE_UNITS_METERS)
                     )
                 ),
-                observed_property_variables=["Ag", "Acetate"],
+                observed_properties=["Ag", "Acetate"],
                 related_sampling_feature_complex=[
                     models.RelatedSamplingFeature(plugin_access=self.plugin_access,
                                                   related_sampling_feature="Region1",
@@ -220,11 +250,13 @@ class SynthesisSerializerTests(TestCase):
                                                   role=models.RelatedSamplingFeature.ROLE_PARENT)]
             ),
             feature_of_interest_type=FeatureTypeEnum.POINT,
-            aggregation_duration=TimeFrequencyEnum.DAY,
+            aggregation_duration="DAY",
             time_reference_position="START",
-            observed_property_variable="Acetate",
-            statistic="MEAN",
-            result_points=[models.TimeValuePair("2018-11-07T15:28:20", "5.32")],
+            observed_property="Acetate",
+            statistic="mean",
+            result=ResultListTVP(plugin_access=self.plugin_access,
+                                 value=models.TimeValuePair("2018-11-07T15:28:20", "5.32"),
+                                 result_quality=["VALIDATED"]),
             unit_of_measurement="m"
         )
 
@@ -236,7 +268,7 @@ class SynthesisSerializerTests(TestCase):
                              "type": "MEASUREMENT_TVP_TIMESERIES",
                              "utc_offset": 9,
                              "phenomenon_time": "2018-11-07T15:28:20",
-                             "result_quality": "CHECKED",
+                             "result_quality": ["VALIDATED"],
                              "feature_of_interest": {
                                  "id": "A-1", "name": "Point Location 1",
                                  "description": "The first point.",
@@ -261,7 +293,7 @@ class SynthesisSerializerTests(TestCase):
                                      }
                                  },
                                  "description_reference": None,
-                                 "observed_property_variables": ["ACT", "Ag"],
+                                 "observed_properties": ["ACT", "Ag"],
                                  "related_party": [],
                                  "url": None,
                                  "utc_offset": None,
@@ -272,8 +304,10 @@ class SynthesisSerializerTests(TestCase):
                              "feature_of_interest_type": "POINT",
                              "aggregation_duration": "DAY",
                              "time_reference_position": "START",
-                             "observed_property_variable": 'ACT',
+                             "observed_property": "ACT",
+                             "sampling_medium": "WATER",
                              "statistic": "MEAN",
-                             "result_points": [["2018-11-07T15:28:20", "5.32"]],
-                             "unit_of_measurement": "m"
+                             "result": {"value": ["2018-11-07T15:28:20", "5.32"], "result_quality": ["VALIDATED"]},
+                             "unit_of_measurement": "m",
+                             "datasource": "Alpha"
                          }, json.loads(json_obj.decode('utf-8')))

@@ -15,21 +15,16 @@
 
 
 """
-import logging
-
 import django_filters
 from rest_framework.decorators import action
 
+from basin3d.core.schema.enum import MAPPING_DELIMITER, MappedAttributeEnum
 from django_basin3d import get_url
-from django_basin3d.models import DataSource, ObservedProperty, ObservedPropertyVariable, \
-    DataSourceObservedPropertyVariable
-from django_basin3d.serializers import DataSourceSerializer, \
-    ObservedPropertySerializer, ObservedPropertyVariableSerializer
+from django_basin3d.models import AttributeMapping, DataSource, ObservedProperty
+from django_basin3d.serializers import DataSourceSerializer, ObservedPropertySerializer, AttributeMappingSerializer
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
-
-logger = logging.getLogger(__name__)
 
 
 class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -42,19 +37,21 @@ class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
         * *name:* string, Unique name for the Data Source
         * *location:* string, Location of the Data Source
         * *id_prefix:* string, unique id prefix for all Data Source ids
-        * *observed_property_variables:* url, Observed property variables for Data Source
+        * *attribute_mapping:* url, List of Attribute Mappings that are mapped for Data Source
+        * *observed_property:* url, List of Observed Properties that are mapped for Data Source
         * *check:* url, Validate the Data Source connection
 
     """
     queryset = DataSource.objects.all()
     serializer_class = DataSourceSerializer
+    lookup_field = 'id_prefix'
 
     @action(detail=True)
-    def check(self, request, pk=None):
+    def check(self, request, id_prefix=None):
         """
-        Determine if Datasource is available
+        Determine if Data Source is available
         :param request:
-        :param pk:
+        :param id_prefix:
         :return:
         """
 
@@ -98,87 +95,88 @@ class DataSourceViewSet(viewsets.ReadOnlyModelViewSet):
                                 status=status.HTTP_200_OK)
 
     @action(detail=True)  # Custom Route for an association
-    def observed_property_variables(self, request, pk=None):
+    def attribute_mapping(self, request, id_prefix=None):
         """
-        Retrieve the DataSource Parameters for a broker parameter.
+        Retrieve the Attribute Mappings for a Data Source.
 
-        Maps to  /datasources/{pk}/observedpropertyvariables/
+        Maps to /datasource/{id_prefix}/attributemapping/
 
         :param request:
-        :param pk:
+        :param id_prefix:
         :return:
         """
-        params = DataSourceObservedPropertyVariable.objects.filter(datasource=pk)
+        params = AttributeMapping.objects.filter(datasource__id_prefix=id_prefix)
+
+        # `HyperlinkedRelatedField` req:w
+        # uires the request in the
+        # serializer context. Add `context={'request': request}`
+        # when instantiating the serializer.
+
+        # Then just serialize and return it!
+        serializer = AttributeMappingSerializer(params, many=True, context={'request': request})
+        return Response(serializer.data)
+
+    @action(detail=True)  # Custom Route for an association
+    def observed_property(self, request, id_prefix=None):
+        """
+        Retrieve the Observed Properties mapped for the current Data Source.
+
+        Maps to /datasource/{id_prefix}/observedproperty/
+
+        :param request:
+        :param id_prefix:
+        :return:
+        """
+        op_name = MappedAttributeEnum.OBSERVED_PROPERTY.value
+        params = AttributeMapping.objects.filter(datasource__id_prefix=id_prefix, attr_type__contains=op_name)
         v = []
-        for dsmv in params:
-            v.append(dsmv.observed_property_variable)
+        for am in params:
+            attr_type_list = am.attr_type.split(MAPPING_DELIMITER)
+            vocab_list = am.basin3d_vocab.split(MAPPING_DELIMITER)
+            for attr, vocab in zip(attr_type_list, vocab_list):
+                if attr == op_name:
+                    v.append(ObservedProperty.objects.get(pk=vocab))
 
         # `HyperlinkedRelatedField` requires the request in the
         # serializer context. Add `context={'request': request}`
         # when instantiating the serializer.
 
         # Then just serialize and return it!
-        serializer = ObservedPropertyVariableSerializer(
-            v, many=True, context={'request': request})
+        serializer = ObservedPropertySerializer(v, many=True, context={'request': request})
         return Response(serializer.data)
 
 
-class ObservedPropertyVariableViewSet(viewsets.ReadOnlyModelViewSet):
+class AttributeMappingViewSet(viewsets.ReadOnlyModelViewSet):
     """
-        Returns a list of available Observed Property Variables. A observed property variable defines what is
-        being measured. See http://vocabulary.odm2.org/variablename/ for controlled vocabulary.
+        Returns a list of the Attribute Mappings for the registered Data Sources.
 
         **Properties**
 
-        * *url:* url, Endpoint for the observed property variable
-        * *basin3d_id:* string, Unique observed property variable identifier
-        * *full_name:* string, Descriptive name
-        * *categories:* list of strings, Categories of which the variable is a member, listed in hierarchical order
-        * *datasources:* url, Retrieves the datasources that define the current variable
+        * *url:* url, endpoint for Attribute Mapping
+        * *attr_type:* string, attribute mapping type
+        * *basin3d_vocab:* string, observed property vocabulary
+        * *basin3d_desc:* list, Observed Property (dict) or enum (str)
+        * *datasource_vocab:* string, datasource vocabulary
+        * *datasource_desc:* string, datasource description
+        * *datasource:* string, data source defining the observed property
 
     """
-    queryset = ObservedPropertyVariable.objects.all()
-    serializer_class = ObservedPropertyVariableSerializer
+    queryset = AttributeMapping.objects.all()
+    serializer_class = AttributeMappingSerializer
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
-
-    @action(detail=True)  # Custom Route for an association
-    def datasources(self, request, pk=None):
-        """
-        Retrieve the DataSource Parameters for a broker parameter.
-
-        Maps to  /observed_property_variables/{pk}/datasources/
-
-        :param request:
-        :param pk: observed_property_variables primary key
-        :return:
-        """
-        params = DataSourceObservedPropertyVariable.objects.filter(observed_property_variable=pk)
-        ds = []
-        for dsmv in params:
-            ds.append(dsmv.datasource)
-
-        # `HyperlinkedRelatedField` requires the request in the
-        # serializer context. Add `context={'request': request}`
-        # when instantiating the serializer.
-
-        # Then just serialize and return it!
-        serializer = DataSourceSerializer(ds, many=True,
-                                          context={'request': request})
-        return Response(serializer.data)
 
 
 class ObservedPropertyViewSet(viewsets.ReadOnlyModelViewSet):
     """
-        Returns a list of available Observation Properties
+        Returns a list of available BASIN-3D Observed Properties
 
         **Properties**
 
-        * *url:* url, endpoint for observed property
-        * *observed_property_variable:* string, observed property variable assigned to the observed property
-        * *datasource:* string, data source defining the observed property
-        * *sampling_medium:* enum, medium in which the observed property is observed
-            (WATER, GAS, SOLID_PHASE, OTHER, NOT_APPLICABLE)
-        * *description:* string, additional information about the observed property
+        * *url:* url, Endpoint for the observed property vocabulary
+        * *basin3d_vocab:* string, Unique BASIN-3D observed property vocabulary
+        * *full_name:* string, Descriptive name
+        * *categories:* list of strings, Categories of which the variable is a member, listed in hierarchical order
+        * *units:* string, units
 
     """
     queryset = ObservedProperty.objects.all()

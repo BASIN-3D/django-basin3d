@@ -35,7 +35,7 @@ license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = '>=3.8,<3.11'
 dependencies = [
-    'basin3d@https://github.com/BASIN-3D/basin3d/archive/refs/tags/0.2.0.zip',
+    'basin3d==0.4.0',
     'django>=4.0',
     'djangorestframework',
     'django-filter',
@@ -46,8 +46,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = ['pytest', 'pytest-mypy', 'pytest-cov', 'pytest-django', 'flake8',
     'types-PyYAML', 'types-chardet', 'types-cryptography', 'types-requests']
-docs = ['sphinx',
-    'sphinx-autodoc-typehints',
+docs = ['sphinx<=6.2.1',
+    'sphinx-autodoc-typehints<=1.23.0',
     'graphviz',
     'sphinx_rtd_theme',
     'tomli',

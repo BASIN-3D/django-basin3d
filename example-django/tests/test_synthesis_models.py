@@ -1,11 +1,11 @@
-from basin3d.core.schema.enum import FeatureTypeEnum, ResultQualityEnum
+from basin3d.core.schema.enum import FeatureTypeEnum, ResultQualityEnum, MappedAttributeEnum
 from basin3d.core.types import SpatialSamplingShapes
 
 from django_basin3d.models import DataSource
 from basin3d.core.models import MonitoringFeature, Coordinate, \
     AbsoluteCoordinate, RepresentativeCoordinate, GeographicCoordinate, AltitudeCoordinate, \
     DepthCoordinate, VerticalCoordinate, RelatedSamplingFeature, Observation, \
-    MeasurementTimeseriesTVPObservation, TimeValuePair
+    MeasurementTimeseriesTVPObservation, TimeValuePair, ResultListTVP, MappedAttribute, AttributeMapping
 from django.test import TestCase
 
 
@@ -125,7 +125,7 @@ class ModelTests(TestCase):
                         value=-0.5, distance_units=VerticalCoordinate.DISTANCE_UNITS_METERS)
                 )
             ),
-            observed_property_variables=["Ag", "Acetate"],
+            observed_properties=["Ag", "Acetate"],
             related_sampling_feature_complex=[
                 RelatedSamplingFeature(plugin_access=self.plugin_access,
                                        related_sampling_feature="Region1",
@@ -153,7 +153,8 @@ class ModelTests(TestCase):
             VerticalCoordinate.DISTANCE_UNITS_METERS
         assert a_point.coordinates.representative.vertical_position.datum == \
             DepthCoordinate.DATUM_LOCAL_SURFACE
-        assert a_point.observed_property_variables == ["ACT", "Ag"]
+        op_list = a_point.observed_properties
+        assert [op.get_basin3d_vocab() for op in op_list] == ["Ag", "ACT"]
         assert a_point.related_sampling_feature_complex[0].related_sampling_feature == "A-Region1"
         assert a_point.related_sampling_feature_complex[0].role == "PARENT"
 
@@ -168,7 +169,7 @@ class ModelTests(TestCase):
             id="timeseries01",
             utc_offset="9",
             phenomenon_time="20180201",
-            result_quality=ResultQualityEnum.CHECKED,
+            result_quality=[ResultQualityEnum.VALIDATED],
             feature_of_interest="Point011")
 
         assert obs01.datasource.name == "Alpha"
@@ -176,7 +177,13 @@ class ModelTests(TestCase):
         assert obs01.utc_offset == "9"
         assert obs01.phenomenon_time == "20180201"
         assert obs01.observed_property is None
-        assert obs01.result_quality == ResultQualityEnum.CHECKED
+        assert obs01.result_quality[0].to_json() == MappedAttribute(
+            attr_type=MappedAttributeEnum.RESULT_QUALITY,
+            attr_mapping=AttributeMapping(
+                attr_type='RESULT_QUALITY',
+                basin3d_vocab='VALIDATED', basin3d_desc=[ResultQualityEnum.VALIDATED],
+                datasource_vocab='VALIDATED', datasource_desc='',
+                datasource=self.datasource)).to_json()
         assert obs01.feature_of_interest == "Point011"
 
     def test_measurement_timeseries_tvp_observation_create(self):
@@ -189,14 +196,16 @@ class ModelTests(TestCase):
             id="timeseries01",
             utc_offset="9",
             phenomenon_time="20180201",
-            result_quality=ResultQualityEnum.CHECKED,
+            result_quality=["VALIDATED"],
             feature_of_interest="Point011",
             feature_of_interest_type=FeatureTypeEnum.POINT,
-            aggregation_duration="daily",
+            aggregation_duration="DAY",
             time_reference_position="start",
-            observed_property_variable="Acetate",
+            observed_property="Acetate",
             statistic="mean",
-            result_points=[TimeValuePair("201802030100", "5.32")],
+            result=ResultListTVP(plugin_access=self.plugin_access,
+                                 value=[TimeValuePair("201802030100", "5.32")],
+                                 result_quality=['VALIDATED']),
             unit_of_measurement="m"
         )
 
@@ -205,13 +214,12 @@ class ModelTests(TestCase):
         assert obs01.utc_offset == "9"
         assert obs01.phenomenon_time == "20180201"
         assert obs01.observed_property is not None
-        assert obs01.observed_property.datasource_variable == "Acetate"
-        assert obs01.observed_property_variable is not None
-        assert obs01.observed_property_variable == "ACT"
-        assert obs01.result_quality == ResultQualityEnum.CHECKED
+        assert isinstance(obs01.observed_property, MappedAttribute) is True
+        assert obs01.observed_property.get_basin3d_vocab() == "ACT"
+        assert obs01.result_quality[0].get_basin3d_vocab() == "VALIDATED"
         assert obs01.feature_of_interest == "Point011"
         assert obs01.feature_of_interest_type == FeatureTypeEnum.POINT
-        assert obs01.aggregation_duration == "daily"
+        assert obs01.aggregation_duration.get_basin3d_vocab() == "DAY"
         assert obs01.time_reference_position == "start"
-        assert obs01.statistic == "mean"
+        assert obs01.statistic.get_basin3d_vocab() == "MEAN"
         assert obs01.unit_of_measurement == "m"

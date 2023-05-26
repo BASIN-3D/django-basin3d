@@ -10,9 +10,8 @@
 
 """
 import logging
-
-import typing
 import pydantic
+import typing
 from basin3d.core.schema.enum import FeatureTypeEnum
 from basin3d.core.schema.query import QueryMeasurementTimeseriesTVP, QueryMonitoringFeature
 from rest_framework import status, versioning
@@ -29,22 +28,39 @@ from django_basin3d.models import DataSource
 from django_basin3d.synthesis.serializers import MeasurementTimeseriesTVPObservationSerializer, \
     MonitoringFeatureSerializer
 
-# Get an instance of a logger
 logger = logging.getLogger(__name__)
 
 
-def get_request_feature_type(request):
+def _get_request_feature_type(request):
     """
     Return the feature type if exists in the request
     :param request: request
-    :param return_format: "enum" (default) = the FeatureTypes enum,
     otherwise return the text version
     :return: the feature_type in the format specified, None if none exists
     """
     for feature_type in FeatureTypeEnum.values():
-        if feature_type.lower() in request.path_info:
+        urlpath = request.path_info
+        if f'{feature_type.lower()}s' in urlpath.split('/'):
             return feature_type
     return None
+
+
+def _convert_str_params_to_list(params: dict, query_class) -> dict:
+    """
+
+    :param params:
+    :param query_class:
+    :return:
+    """
+    query_arg_types = typing.get_type_hints(query_class)
+
+    for arg, arg_type in query_arg_types.items():
+        # arg_type_str = str(arg_type)
+        if 'List' not in str(arg_type) or arg not in params.keys():
+            continue
+        params[arg] = params[arg].split(',')
+
+    return params
 
 
 class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
@@ -158,7 +174,7 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
     * *name:* string, Feature name
     * *description:* string, Description of the feature
     * *feature_type:* sting, FeatureType: REGION, SUBREGION, BASIN, SUBBASIN, WATERSHED, SUBWATERSHED, SITE, PLOT, HORIZONTAL PATH, VERTICAL PATH, POINT
-    * *observed_property_variables:* list of observed variables made at the feature. Observed property variables are configured via the plugins.
+    * *observed_properties:* list of observed variables made at the feature. Observed property variables are configured via the plugins.
     * *related_sampling_feature_complex:* list of related_sampling features. PARENT features are currently supported.
     * *shape:* string, Shape of the feature: POINT, CURVE, SURFACE, SOLID
     * *coordinates:* location of feature in absolute and/or representative datum
@@ -170,6 +186,7 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
     **Filter** by the following attributes (/?attribute=parameter&attribute=parameter&...)
 
     * *datasource (optional):* a single data source id prefix (e.g ?datasource=`datasource.id_prefix`)
+    * *parent_feature (optional):* a monitoring feature name
 
     **Restrict fields**  with query parameter `fields`. (e.g. `?fields=id,name`)
     """
@@ -181,9 +198,11 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
         if not request:
             raise Response({"success": False, "detail": "Request is missing"}, status=status.HTTP_400_BAD_REQUEST)
 
-        feature_type = get_request_feature_type(request)
+        feature_type = _get_request_feature_type(request)
 
         params = request.query_params.dict()
+        params = _convert_str_params_to_list(params, QueryMonitoringFeature)
+
         return super().list(request=request, format=format, query=QueryMonitoringFeature(feature_type=feature_type,
                                                                                          **params))
 
@@ -193,9 +212,9 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
             return Response({'success': False, 'detail': "Request is missing"},
                             status=status.HTTP_400_BAD_REQUEST, )
 
-        feature_type = get_request_feature_type(request)
+        feature_type = _get_request_feature_type(request)
         params = request.query_params.dict()
-        return super().retrieve(request=request, pk=pk, query=QueryMonitoringFeature(monitoring_features=[pk],
+        return super().retrieve(request=request, pk=pk, query=QueryMonitoringFeature(monitoring_feature=[pk],
                                                                                      feature_type=feature_type,
                                                                                      **params))
 
@@ -262,29 +281,33 @@ class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObserva
 
     * *id:* string, Observation identifier (optional)
     * *type:* enum, MEASUREMENT_TVP_TIMESERIES
-    * *observed_property:* url, URL for the observation's observed property
+    * *observed_property:* str, BASIN-3D vocabulary for the observation's observed property
+    * *datasource:* URL, url of the datasource
+    * *sampling_medium:* enum, sampling medium of the observed property (SOLID_PHASE, WATER, GAS, OTHER)
     * *phenomenon_time:* datetime, datetime of the observation, for a timeseries the start and end times can be provided
     * *utc_offset:* float, Coordinate Universal Time offset in hours (offset in hours), e.g., +9
     * *feature_of_interest:* MonitoringFeature obj, feature on which the observation is being made
     * *feature_of_interest_type:* enum (FeatureTypes), feature type of the feature of interest
-    * *result_points:* list of TimeValuePair obj, observed values of the observed property being assessed
+    * *result:* dict of corresponding lists of TimeValuePairs, the observed values of the observed property being assessed, and (opt) their result_quality,
     * *time_reference_position:* enum, position of timestamp in aggregated_duration (START, MIDDLE, END)
     * *aggregation_duration:* enum, time period represented by observation (YEAR, MONTH, DAY, HOUR, MINUTE, SECOND)
     * *unit_of_measurement:* string, units in which the observation is reported
     * *statistic:* enum, statistical property of the observation result (MEAN, MIN, MAX, TOTAL)
-    * *result_quality:* enum, quality assessment of the result (CHECKED, UNCHECKED)
+    * *result_quality:* list of enum, quality assessment of the result enum (VALIDATED, UNVALIDATED, SUSPECTED, REJECTED, ESTIMATED)
 
-    **Filter** by the following attributes (?attribute=parameter&attribute=parameter&...):
+    **Filter** by the following attributes (?attribute=parameter,parameter&attribute=parameter&...):
 
-    * *monitoring_features (required):* comma separated list of monitoring_features ids
-    * *observed_property_variables (required):* comma separated list of observed property variable ids
+    * *monitoring_feature (required):* comma separated list of monitoring_features ids
+    * *observed_property (required):* comma separated list of observed property basin3d vocabularies
     * *start_date (required):* date YYYY-MM-DD
     * *end_date (optional):* date YYYY-MM-DD
-    * *aggregation_duration (default: DAY):* enum (YEAR|MONTH|DAY|HOUR|MINUTE|SECOND)
+    * *aggregation_duration (default: DAY):* enum (YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|NONE)
+    * *statistic (optional):* comma separated list of statistic enum(s) (MEAN|MIN|MAX|INSTANTANEOUS)
+    * *result_quality (optional):* comma separated list of result quality enum(s) enum (VALIDATED|UNVALIDATED|SUSPECTED|REJECTED|ESTIMATED)
+    * *sampling_medium (optional):* comma separated list of sampling medium enum(s) (SOLID_PHASE|WATER|GAS|OTHER)
     * *datasource (optional):* a single data source id prefix (e.g ?datasource=`datasource.id_prefix`)
 
     **Restrict fields** with query parameter `fields`. (e.g. `?fields=id,name`)
-
 
     """
     serializer_class = MeasurementTimeseriesTVPObservationSerializer
@@ -297,6 +320,7 @@ class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObserva
                             status=status.HTTP_400_BAD_REQUEST, )
 
         params = request.query_params.dict()
+        params = _convert_str_params_to_list(params, QueryMeasurementTimeseriesTVP)
 
         try:
             return super().list(request=request, format=format, query=QueryMeasurementTimeseriesTVP(**params))

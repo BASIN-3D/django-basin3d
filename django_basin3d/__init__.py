@@ -25,53 +25,54 @@ BASIN-3D Data sources definitions.  All data sources defined are available for s
 subsequent APIs.
 
 | `/datasources --` Returns a list of data sources
-| `/datasources/:id --` Get a single data source
+| `/datasources/:id_prefix --` Get a single data source
 
 **Attributes:**
     - *name:* Unique name for the data source
     - *id_prefix:* A unique iset of characters to prefix ids for the data source
     - *location:* Location of the data source
-    - *observed_property_variables:* Observed property variables for the data source
+    - *observed_property:* BASIN-3D Observed Property mappings for the data source
 
 **URLs**
   + url -- URL with details for the data source
   + check -- Validation URL for the data source connection
 
 
-Observed Property Variables
+Observed Property
 ---------------------------
-Common names for observed property variables. A observed property variable defines what is
-being measured. Data source observed property variables are mapped to these synthesized
-observed property variables.
+BASIN-3D vocabulary for observed properties. A observed property defines what is
+being measured. Data source vocabularies are mapped to these BASIN-3D vocabularies.
 
-| `/observedpropertyvariables --` Returns a list of observed property variables
-| `/observedpropertyvariables/:basin3d_id --` Get a single observed property variable
+| `/observedproperty --` Returns a list of observed properties
+| `/observedproperty/:basin3d_vocab --` Get a single observed property
 
 **Attributes:**
-    - *basin3d_id:* Unique observed property variable identifier
-    - *full_name:* Descriptive name for the observed property variable
+    - *basin3d_vocab:* Unique observed property vocabulary
+    - *full_name:* Descriptive name for the observed property
     - *categories:* Categories of which the variable is a member, listed in hierarchical order
-    - *datasources:* List of the data sources that define the current observed property variable
-
-**URLs**
-  + url -- URL with details for the observed property variable
-
-
-Observed Properties
--------------------
-Definition of the attributes for an observed property
-
-| `/observedproperty --` Returns a list of observed property variables
-| `/observedproperty/:id --` Get a single observed property variable
-
-**Attributes:**
-    - *observed_property_variable:* Observed property variable assigned to the observed property
-    - *datasource:* Data source defining the observed property
-    - *sampling_medium:* Medium in which the observed property is observed (WATER, GAS, SOLID_PHASE, OTHER, NOT_APPLICABLE)
-    - *description:* Additional information about the observed property
+    - *units:* Units of the observed property
 
 **URLs**
   + url -- URL with details for the observed property
+
+
+Attribute Mapping
+-------------------
+The Attribute Mappings registered for the Data Source plugins
+
+| `/attributemapping --` Returns a list of all attribute mappings
+| `/attributemapping/:id --` Get a single attribute mapping
+
+**Attributes:**
+    - *attr_type:* Attribute Type; e.g., STATISTIC, RESULT_QUALITY, OBSERVED_PROPERTY; separate compound mappings with ':'
+    - *basin3d_vocab:* The BASIN-3D vocabulary; separate compound mappings with ':'
+    - *basin3d_desc:* The BASIN-3D vocabulary descriptions; observed property objects or enum
+    - *datasource_vocab:* The datasource vocabulary
+    - *datasource_desc:* The datasource vocabulary description
+    - *datasource:* The datasource of the mapping
+
+**URLs**
+  + url -- URL with details for the attribute mapping
 
 
 Monitoring Features
@@ -79,9 +80,9 @@ Monitoring Features
 A feature on which an observation is made. Features organized into spatial
 hierarchies are described via the related_sampling_feature complex
 
-| `/monitoringfeatures --` Returns a list of monitoring features types
-| `/monitoringfeatures/:featuretype --` Returns a list of monitoring features of the specified feature type
-| `/monitoringfeatures/:featuretype/:id --` Get a single monitoring feature
+| `/monitoringfeature --` Returns a list of monitoring features types
+| `/monitoringfeature/:featuretype --` Returns a list of monitoring features of the specified feature type
+| `/monitoringfeature/:featuretype/:id --` Get a single monitoring feature
 
 **Synthesis Response**
 This endpoint returns the following synthesis response object.
@@ -127,31 +128,35 @@ This endpoint returns the following synthesis response object.
 **Data Attributes**
     Attribute for each data element from the synthesis response is as follows:
 
-    - *id:* Observation identifier (optional)
-    - *type:* type of observation = MEASUREMENT_TVP_TIMESERIES
-    - *phenomenon_time:* Datetime of the observation, for a timeseries the start and end times can be provided
-    - *utc_offset:* Coordinate Universal Time offset in hours (offset in hours), e.g., +9
-    - *feature_of_interest:* feature on which the observation is being made
-    - *feature_of_interest_type:* feature type of the feature of interest
-    - *result_points:* observed values of the observed property being assessed in format of TVP (time value pair)
-    - *time_reference_position:* position of timestamp in aggregated_duration (START, MIDDLE, END)
-    - *aggregation_duration:* time period represented by observation (YEAR, MONTH, DAY, HOUR, MINUTE, SECOND)
-    - *unit_of_measurement:* units in which the observation is reported
-    - *statistic:* statistical property of the observation result (MEAN, MIN, MAX, TOTAL)
-    - *result_quality:* quality assessment of the result (CHECKED, UNCHECKED)
+    * *id:* Observation identifier (optional)
+    * *type:* MEASUREMENT_TVP_TIMESERIES
+    * *observed_property:* BASIN-3D vocabulary for the observation's observed property
+    * *sampling_medium:* Sampling medium of the observed property (SOLID_PHASE, WATER, GAS, OTHER)
+    * *phenomenon_time:* datetime of the observation, for a timeseries the start and end times can be provided
+    * *utc_offset:* Coordinate Universal Time offset in hours (offset in hours), e.g., +9
+    * *feature_of_interest:* feature on which the observation is being made
+    * *feature_of_interest_type:* feature type of the feature of interest
+    * *result:* values = the observed values of the observed property being assessed, and result_qualit (opt) = their result_quality,
+    * *time_reference_position:* position of timestamp in aggregated_duration (START, MIDDLE, END)
+    * *aggregation_duration:* time period represented by observation (YEAR, MONTH, DAY, HOUR, MINUTE, SECOND)
+    * *unit_of_measurement:* units in which the observation is reported
+    * *statistic:* statistical property of the observation result (MEAN, MIN, MAX, TOTAL)
+    * *result_quality:* quality assessments of the results (VALIDATED, UNVALIDATED, SUSPECTED, REJECTED, ESTIMATED)
 
 **URLs**
   + url -- URL with details for the feature
-  + observed_property -- URL for the observation's observed property
+  + datasource -- URL of the datasource
 
 **Filters**
-    - *monitoring_features (required):* comma separated list of monitoring_features ids
-    - *observed_property_variables (required):* comma separated list of observed property variable ids
+    - *monitoring_feature (required):* comma separated list of monitoring_features ids
+    - *observed_property (required):* comma separated list of observed property basin3d vocabularies
     - *start_date (required):* date YYYY-MM-DD
     - *end_date (optional):* date YYYY-MM-DD
-    - *aggregation_duration (default: DAY):* enum (YEAR|MONTH|DAY|HOUR|MINUTE|SECOND)
+    - *aggregation_duration (default: DAY):* enum (YEAR|MONTH|DAY|HOUR|MINUTE|SECOND|NONE)
+    - *statistic (optional):* comma separated list of statistic enum(s) (MEAN|MIN|MAX|INSTANTANEOUS)
+    - *result_quality (optional):* comma separated list of result quality enum(s) enum (VALIDATED|UNVALIDATED|SUSPECTED|REJECTED|ESTIMATED)
+    - *sampling_medium (optional):* comma separated list of sampling medium enum(s) (SOLID_PHASE|WATER|GAS|OTHER)
     - *datasource (optional):* a single data source id prefix (e.g ?datasource=`datasource.id_prefix`)
-
 
 """
 from importlib.metadata import version, PackageNotFoundError

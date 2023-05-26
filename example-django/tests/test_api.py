@@ -18,11 +18,11 @@ class TestAPIRoot(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(json.loads(response.content.decode('utf-8')),
                          {
-                             "datasources": "http://testserver/datasources/",
-                             "observedpropertyvariables": "http://testserver/observedpropertyvariables/",
+                             "datasource": "http://testserver/datasource/",
+                             "attributemapping": "http://testserver/attributemapping/",
                              "observedproperty": "http://testserver/observedproperty/",
                              "measurementtvptimeseries": "http://testserver/measurement_tvp_timeseries/",
-                             "monitoringfeatures": "http://testserver/monitoringfeatures/"
+                             "monitoringfeature": "http://testserver/monitoringfeature/"
                          })
 
 
@@ -112,117 +112,111 @@ class TestMeasurementTimeseriesTVPObservationAPI(TestCase):
     """
 
     VALID_OUTPUT_DATA = [
-            {
-                "id": "A-1",
-                "unit_of_measurement": "nm",
-                'observed_property_variable': 'ACT',
-                "feature_of_interest": {
-                    "id": "A-1", "name": "Point Location 1",
-                    "description": "The point.",
-                    "feature_type": "POINT", "shape": "POINT",
-                    "coordinates": {
-                        "absolute": {
-                            "horizontal_position": [{
-                                "units": "DD", "latitude": 70.4657, "y": 70.4657, "x": -20.4567,
-                                "longitude": -20.4567, "datum": None, "type": "GEOGRAPHIC"
-                            }],
-                            "vertical_extent": [{
-                                "datum": "NAVD88", "value": 1500.0,
-                                "distance_units": "feet", "resolution": None, "type": "ALTITUDE"
-                            }]
-                        },
-                        "representative": {
-                            "representative_point_type": None, "representative_point": None,
-                            "vertical_position": {
-                                "datum": "LS", "value": -0.6, "distance_units": "meters",
-                                "type": "DEPTH", "resolution": None
-                            }
-                        }
-                    },
-                    "description_reference": None,
-                    "observed_property_variables": ["ACT", "Ag"],
-                    "related_party": [],
-                    "url": "http://testserver/monitoringfeatures/points/A-1/",
-                    "utc_offset": None,
-                    "related_sampling_feature_complex": [{"related_sampling_feature": "A-Region1",
-                                                          "related_sampling_feature_type": "REGION",
-                                                          "role": "PARENT",
-                                                          "url": "http://testserver/monitoringfeatures/regions/A-Region1/"}],
-                },
-                "feature_of_interest_type": "POINT",
-                "utc_offset": -9,
-                "result_points": [["2016-02-01T00:00:00", 0.3454],
-                                  ["2016-02-02T00:00:00", 0.6908],
-                                  ["2016-02-03T00:00:00", 1.0362],
-                                  ["2016-02-04T00:00:00", 1.3816],
-                                  ["2016-02-05T00:00:00", 1.7269999999999999],
-                                  ["2016-02-06T00:00:00", 2.0724],
-                                  ["2016-02-07T00:00:00", 2.4177999999999997],
-                                  ["2016-02-08T00:00:00", 2.7632],
-                                  ["2016-02-09T00:00:00", 3.1086]],
-                "result_quality": "CHECKED",
-                "statistic": "MEAN",
-                "type": "MEASUREMENT_TVP_TIMESERIES",
-                "aggregation_duration": "DAY",
-                "phenomenon_time": None
+        {
+            "aggregation_duration": "DAY",
+            "sampling_medium": "WATER",
+            "statistic": "MEAN",
+            "result": {
+                "value": [
+                    ["2016-02-01T00:00:00", 0.3454],
+                    ["2016-02-02T00:00:00", 0.6908],
+                    ["2016-02-03T00:00:00", 1.0362],
+                    ["2016-02-04T00:00:00", 1.3816],
+                    ["2016-02-05T00:00:00", 1.7269999999999999],
+                    ["2016-02-06T00:00:00", 2.0724],
+                    ["2016-02-07T00:00:00", 2.4177999999999997],
+                    ["2016-02-08T00:00:00", 2.7632],
+                    ["2016-02-09T00:00:00", 3.1086]
+                ],
+                "result_quality": [
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED",
+                    "VALIDATED"
+                ]
             },
-            {
-                "id": "A-2",
-                'observed_property_variable': 'ACT',
-                "feature_of_interest": {
-                    "id": "A-2", "name": "Point Location 2",
-                    "description": "The point.",
-                    "feature_type": "POINT", "shape": "POINT",
-                    "coordinates": {
-                        "absolute": {
-                            "horizontal_position": [{
-                                "units": "DD", "latitude": 70.4657, "y": 70.4657, "x": -20.4567,
-                                "longitude": -20.4567, "datum": None, "type": "GEOGRAPHIC"
-                            }],
-                            "vertical_extent": [{
-                                "datum": "NAVD88", "value": 1500.0,
-                                "distance_units": "feet", "resolution": None, "type": "ALTITUDE"
-                            }]
-                        },
-                        "representative": {
-                            "representative_point_type": None, "representative_point": None,
-                            "vertical_position": {
-                                "datum": "LS", "value": -0.7, "distance_units": "meters",
-                                "type": "DEPTH", "resolution": None
+            "unit_of_measurement": "nm",
+            "datasource": "http://testserver/datasource/A/",
+            "id": "A-1",
+            "type": "MEASUREMENT_TVP_TIMESERIES",
+            "utc_offset": -9,
+            "phenomenon_time": None,
+            "observed_property": "ACT",
+            "result_quality": [
+                "VALIDATED"
+            ],
+            "feature_of_interest": {
+                "id": "A-1",
+                "name": "Point Location 1",
+                "description": "The point.",
+                "feature_type": "POINT",
+                "observed_properties": [
+                    "ACT",
+                    "Ag",
+                    "Al",
+                    "Al"
+                ],
+                "related_sampling_feature_complex": [
+                    {
+                        "related_sampling_feature": "A-Region1",
+                        "related_sampling_feature_type": "REGION",
+                        "role": "PARENT",
+                        "url": "http://testserver/monitoringfeature/regions/A-Region1/"
+                    }
+                ],
+                "shape": "POINT",
+                "coordinates": {
+                    "absolute": {
+                        "horizontal_position": [
+                            {
+                                "x": -20.4567,
+                                "y": 70.4657,
+                                "datum": None,
+                                "type": "GEOGRAPHIC",
+                                "latitude": 70.4657,
+                                "longitude": -20.4567,
+                                "units": "DD"
                             }
-                        }
+                        ],
+                        "vertical_extent": [
+                            {
+                                "value": 1500.0,
+                                "resolution": None,
+                                "distance_units": "feet",
+                                "datum": "NAVD88",
+                                "type": "ALTITUDE"
+                            }
+                        ]
                     },
-                    "description_reference": None,
-                    "observed_property_variables": ["ACT", "Ag"],
-                    "related_party": [],
-                    "url": "http://testserver/monitoringfeatures/points/A-2/",
-                    "utc_offset": None,
-                    "related_sampling_feature_complex": [{"related_sampling_feature": "A-Region1",
-                                                          "related_sampling_feature_type": "REGION",
-                                                          "role": "PARENT",
-                                                          "url": "http://testserver/monitoringfeatures/regions/A-Region1/"}],
+                    "representative": {
+                        "representative_point": None,
+                        "representative_point_type": None,
+                        "vertical_position": {
+                            "value": -0.6,
+                            "resolution": None,
+                            "distance_units": "meters",
+                            "datum": "LS",
+                            "type": "DEPTH"
+                        }
+                    }
                 },
-                "feature_of_interest_type": "POINT",
-                "utc_offset": -10,
-                "unit_of_measurement": "nm",
-                "result_points": [["2016-02-01T00:00:00", 0.3454],
-                                  ["2016-02-02T00:00:00", 0.6908],
-                                  ["2016-02-03T00:00:00", 1.0362],
-                                  ["2016-02-04T00:00:00", 1.3816],
-                                  ["2016-02-05T00:00:00", 1.7269999999999999],
-                                  ["2016-02-06T00:00:00", 2.0724],
-                                  ["2016-02-07T00:00:00", 2.4177999999999997],
-                                  ["2016-02-08T00:00:00", 2.7632],
-                                  ["2016-02-09T00:00:00", 3.1086]],
-                "result_quality": "CHECKED",
-                "statistic": "MEAN",
-                "type": "MEASUREMENT_TVP_TIMESERIES",
-                "aggregation_duration": "DAY",
-                "phenomenon_time": None
-            }]
-    VALID_OUTPUT = {"query": {'monitoring_features': ['A-1'],
-                              'observed_property_variables': ['ACT'],
-                              'start_date': '2020-01-01'}, "data": VALID_OUTPUT_DATA}
+                "description_reference": None,
+                "related_party": [],
+                "utc_offset": None,
+                "url": "http://testserver/monitoringfeature/points/A-1/"
+            },
+            "feature_of_interest_type": "POINT"
+        }]
+    VALID_OUTPUT = {"query": {'monitoring_feature': ['A-1'],
+                              'observed_property': ['ACT'],
+                              'start_date': '2016-02-01',
+                              'aggregation_duration': 'DAY'},
+                    'data': VALID_OUTPUT_DATA}
 
     ERROR_OUTPUT = {'detail': 'Missing or invalid search criteria',
                     'errors': [{'loc': ['startDate'],
@@ -235,10 +229,10 @@ class TestMeasurementTimeseriesTVPObservationAPI(TestCase):
 
     def test_get(self):
         for query_string, expected_status, expected_output in [
-                ("monitoring_features=A-1&observed_property_variables=ACT&start_date=2020-01-01", 200, self.VALID_OUTPUT),
-                ("monitoring_features=A-1&observed_property_variables=ACT&start_date=1/1/2020", 400, self.ERROR_OUTPUT),
-                ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=2020-01-01", 200, self.VALID_OUTPUT),
-                ("monitoringFeatures=A-1&observedPropertyVariables=ACT&startDate=1/1/2020", 400, self.ERROR_OUTPUT)]:
+                ("monitoring_feature=A-1&observed_property=ACT&start_date=2016-02-01", 200, self.VALID_OUTPUT),
+                ("monitoring_feature=A-1&observed_property=ACT&start_date=2/1/2016", 400, self.ERROR_OUTPUT),
+                ("monitoringFeature=A-1&observedProperty=ACT&startDate=2016-02-01", 200, self.VALID_OUTPUT),
+                ("monitoringFeature=A-1&observedProperty=ACT&startDate=2/1/2016", 400, self.ERROR_OUTPUT)]:
 
             print(f"{query_string}")
             response = self.client.get(f'/measurement_tvp_timeseries/?{query_string}', format='json')

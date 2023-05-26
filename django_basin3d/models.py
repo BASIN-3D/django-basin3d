@@ -44,7 +44,7 @@ class StringListField(models.TextField):
         elif isinstance(value, str):
             return value.split(self.delimiter)
 
-        raise ValueError("ListField must be  delimited string")
+        raise ValueError("ListField must be delimited string")
 
     def get_prep_value(self, value):
         if value is None:
@@ -102,22 +102,23 @@ class DataSource(models.Model):
 
 class ObservedProperty(models.Model):
     """
-    Defining the attributes for a single/multiple Observed Properties
+    Defining the properties being observed (measured).
+    See https://github.com/BASIN-3D/basin3d/blob/main/basin3d/data/basin3d_observed_property_vocabulary.csv
 
-    Attributes:
-        - *id:* string, e.g., Cs137 MID
-        - *description:* id, e.g., Cs 137 air dose rate car survey campaigns
-        - *observed_property_variable_id:* string, e.g., Cs137MVID
-        - *sampling_medium:* enum (WATER, GAS, SOLID PHASE, OTHER, NOT APPLICABLE)
+    Fields:
+        - *basin3d_vocab:* string, BASIN-3D observed property vocabulary
+        - *full_name:* string, Description of observed property
+        - *categories:* List of strings, categories (in order of priority), .
+        - *units:* string, units of the observed property
     """
 
-    description = models.TextField(null=True, blank=True)
-    observed_property_variable = models.ForeignKey('ObservedPropertyVariable', null=False, on_delete=models.CASCADE)
-    sampling_medium = models.ForeignKey('SamplingMedium', null=False, on_delete=models.DO_NOTHING)
-    datasource = models.ForeignKey('DataSource', null=False, on_delete=models.DO_NOTHING)
+    basin3d_vocab = models.CharField(max_length=50, unique=True, blank=False, primary_key=True)
+    full_name = models.CharField(max_length=255)
+    categories = StringListField(blank=True, null=True)
+    units = models.CharField(max_length=50, blank=False)
 
     class Meta:
-        unique_together = ('observed_property_variable', 'datasource')
+        ordering = ('basin3d_vocab',)
 
     def __str__(self):
         return self.__unicode__()
@@ -126,88 +127,36 @@ class ObservedProperty(models.Model):
         return self.description
 
     def __repr__(self):
-        return '<ObservedProperty %r>' % (self.description)
+        return '<ObservedProperty %r>' % self.basin3d_vocab
 
 
-class ObservedPropertyVariable(models.Model):
+class AttributeMapping(models.Model):
     """
-    Defining the properties being observed (measured). See http://vocabulary.odm2.org/variablename/ for controlled vocabulary
+    A data class for attribute mappings between datasource vocabularies and BASIN-3D vocabularies.
+    These are the associations defined in the datasource (i.e., plugin) mapping file.
 
-    Attributes:
-        - *id:* string,
-        - *full_name:* string,
-        - *abbreviation:* string,
-        - *categories:* Array of strings (in order of priority).
-
-    See http://vocabulary.odm2.org/variabletype/ for options, although I think we should have our own list (theirs is a bit funky).
-
-
+    Fields:
+         - *attr_type:* Attribute Type; e.g., STATISTIC, RESULT_QUALITY, OBSERVED_PROPERTY; separate compound mappings with ':'
+         - *basin3d_vocab:* The BASIN-3D vocabulary; separate compound mappings with ':'
+         - *basin3d_desc:* The BASIN-3D vocabulary descriptions; objects or enum
+         - *datasource_vocab:* The datasource vocabulary
+         - *datasource_desc:* The datasource vocabulary description
+         - *datasource:* The datasource of the mapping
     """
 
-    # Unique string Identifier for the Observed Property Variable
-    basin3d_id = models.CharField(max_length=50, unique=True, blank=False, primary_key=True)
-
-    # Long name of the Observed Property Variable
-    full_name = models.CharField(max_length=255)
-
-    # Ordered list of categories
-    categories = StringListField(blank=True, null=True)
-
-    class Meta:
-        ordering = ('basin3d_id',)
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        return self.full_name
-
-    def __repr__(self):
-        return "<ObservedPropertyVariable {}>".format(self.id)
-
-
-class DataSourceObservedPropertyVariable(models.Model):
-    """
-    Synthesis of Data Source Observed Property Variables with BASIN-3D Observed Property Variables
-    """
+    attr_type = models.CharField(max_length=50)
+    basin3d_vocab = models.CharField(max_length=50)
+    basin3d_desc = models.JSONField()
+    datasource_vocab = models.CharField(max_length=50, blank=False)
+    datasource_desc = models.TextField(blank=True, null=True)
     datasource = models.ForeignKey(DataSource, on_delete=models.DO_NOTHING)
-    observed_property_variable = models.ForeignKey(ObservedPropertyVariable,
-                                                   on_delete=models.DO_NOTHING)
-    name = models.CharField(max_length=255, blank=False)
 
     class Meta:
-        unique_together = (("datasource", "observed_property_variable"),)
+        unique_together = ('datasource', 'attr_type', 'datasource_vocab')
+        ordering = ('datasource', 'attr_type', 'basin3d_vocab')
 
     def __str__(self):
         return self.__unicode__()
 
     def __unicode__(self):
-        return self.name
-
-    def __repr__(self):
-        return '<DataSourceObservedPropertyVariable %r>' % (self.name)
-
-
-class SamplingMedium(models.Model):
-    """
-    Types of sampling mediums for Observed Properties
-    """
-
-    SOLID_PHASE = "SOLID PHASE"
-    WATER = "WATER"
-    GAS = "GAS"
-    OTHER = "OTHER"
-    NOT_APPLICABLE = "N/A"
-    SAMPLING_MEDIUMS = [WATER, GAS, SOLID_PHASE, OTHER, NOT_APPLICABLE]
-
-    name = models.CharField(max_length=50, null=False, blank=False, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        return self.name
-
-    def __repr__(self):
-        return '<SamplingMedium %r>' % (self.name)
+        return self.datasource_vocab

@@ -65,7 +65,7 @@ Create one or more plugins in a plugins module in `your-app/plugins.py`. The fol
 must be placed in `your-app/` directory along side `plugins.py`
 
 `basin3d_observed_property_vocabulary.csv`
-.................................
+..........................................
 Hydrology variables have been defined in `basin3d`.  These  broker variables are in a comma separated values (csv)
 file named `basin3d_observed_property_vocabulary.csv`_ and can be found at https://github.com/BASIN-3D/basin3d.
 

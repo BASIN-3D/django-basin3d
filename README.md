@@ -1,3 +1,6 @@
+[![Python package](https://github.com/BASIN-3D/django-basin3d/actions/workflows/main.yml/badge.svg)](https://github.com/BASIN-3D/django-basin3d/actions/workflows/main.yml) 
+[![Pypi](https://img.shields.io/pypi/v/django-basin3d)](https://pypi.org/project/django-basin3d/)
+
 # django-basin3d
 Django web framework for Broker for Assimilation, Synthesis and Integration of eNvironmental Diverse, Distributed Datasets
 

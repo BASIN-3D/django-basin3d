@@ -1,5 +1,11 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.2
+Updates DataSourceModelViewset.retrieve method to use plugin get method.
+
+## Version 1.0.1
+Minor maintenance to pin package versions.
+
 ## Version 1.0.0
 This release updates django-basin3d to work with the latest basin3d v0.4.0 that enables complex- and multi-mappings between datasource vocabulary and BASIN-3D vocabulary.
 

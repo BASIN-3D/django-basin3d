@@ -28,82 +28,153 @@ class TestAPIRoot(TestCase):
 
 class TestSiteAPI(TestCase):
     """
-    Test /regions api
+    Test /monitoringfeature/<feature_type> api
     """
 
     def setUp(self):
         self.client = APIClient()
 
-    # # KEEP until replacement test is built
-    # def test_get(self):
-    #     self.maxDiff = None
-    #     response = self.client.get('/sites/', format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(json.loads(response.content.decode('utf-8')),
-    #                      [
-    #                          {
-    #                              "id": "A-1",
-    #                              "name": "Foo",
-    #                              "description": "Foo Bar Site",
-    #                              "type": "site",
-    #                              "country": "US",
-    #                              "state_province": "California",
-    #                              "utc_offset": -6,
-    #                              "center_coordinates": {
-    #                                  "datum": "WGS84",
-    #                                  "type": "geographic",
-    #                                  "latitude": 90.0,
-    #                                  "longitude": 90.0,
-    #                                  "units": "DS"
-    #                              },
-    #                              "contacts": [
-    #                                  {
-    #                                      "first_name": "Barry",
-    #                                      "last_name": "Allen",
-    #                                      "email": "ballen@foo.bar",
-    #                                      "institution": "DC Comics",
-    #                                      "role": None
-    #                                  }
-    #                              ],
-    #                              "pi": {
-    #                                  "first_name": "Jessica",
-    #                                  "last_name": "Jones",
-    #                                  "email": "jjones@foo.bar",
-    #                                  "institution": "DC Comics",
-    #                                  "role": None
-    #                              },
-    #                              "urls": [
-    #                                  "http://foo.bar"
-    #                              ],
-    #                              "url": "http://testserver/sites/A-1/"
-    #                          }
-    #                      ]
-    #
-    #                      )
-    #
-    # def test_get_detail(self):
-    #     response = self.client.get('/regions/A-SI123/', format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(json.loads(response.content.decode('utf-8')),
-    #                      {"id": "A-SI123", "geom": None,
-    #                       "description": "This is for my site description",
-    #                       'name': 'a site',
-    #                       "url": "http://testserver/regions/A-SI123/"})
-    #
-    # def test_get_detail_missing(self):
-    #     response = self.client.get('/regions/A-FOO/', format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    #     self.assertEqual(json.loads(response.content.decode('utf-8')),
-    #                      {'content': 'There is no detail for A-FOO', 'success': False})
-    #
-    # def test_get_bad_id_prefix(self):
-    #     response = self.client.get('/regions/B-FOO/', format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    #     self.assertEqual(json.loads(response.content.decode('utf-8')),
-    #                      {
-    #                          'detail': 'There is no detail for datasource object B-FOO. The datasource id '
-    #                                    "'B' is invalid.",
-    #                          'success': False})
+    def test_get_for_monitoring_feature_list(self):
+        self.maxDiff = None
+        response = self.client.get('/monitoringfeature/points/?datasource=A', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content.decode('utf-8')),
+                         {
+                             "query": {
+                                 "datasource": [
+                                     "A"
+                                 ],
+                                 "feature_type": "POINT"
+                             },
+                             "data": [
+                                 {
+                                     "id": "A-1",
+                                     "name": "Point Location 1",
+                                     "description": "The first point.",
+                                     "feature_type": "POINT",
+                                     "observed_properties": [
+                                         "ACT",
+                                         "Ag"
+                                     ],
+                                     "related_sampling_feature_complex": [
+                                         {
+                                             "related_sampling_feature": "A-Region1",
+                                             "related_sampling_feature_type": "REGION",
+                                             "role": "PARENT",
+                                             "url": "http://testserver/monitoringfeature/regions/A-Region1/"
+                                         }
+                                     ],
+                                     "shape": "POINT",
+                                     "coordinates": {
+                                         "absolute": {
+                                             "horizontal_position": [
+                                                 {
+                                                     "x": -20.4567,
+                                                     "y": 70.4657,
+                                                     "datum": None,
+                                                     "type": "GEOGRAPHIC",
+                                                     "latitude": 70.4657,
+                                                     "longitude": -20.4567,
+                                                     "units": "DD"
+                                                 }
+                                             ],
+                                             "vertical_extent": [
+                                                 {
+                                                     "value": 1500.0,
+                                                     "resolution": None,
+                                                     "distance_units": "feet",
+                                                     "datum": "NAVD88",
+                                                     "type": "ALTITUDE"
+                                                 }
+                                             ]
+                                         },
+                                         "representative": {
+                                             "representative_point": None,
+                                             "representative_point_type": None,
+                                             "vertical_position": {
+                                                 "value": -0.5,
+                                                 "resolution": None,
+                                                 "distance_units": "meters",
+                                                 "datum": "LS",
+                                                 "type": "DEPTH"
+                                             }
+                                         }
+                                     },
+                                     "description_reference": None,
+                                     "related_party": [],
+                                     "utc_offset": None,
+                                     "url": "http://testserver/monitoringfeature/points/A-1/"
+                                 }
+                             ]
+                         }
+                         )
+
+    def test_get_detail(self):
+        response = self.client.get('/monitoringfeature/regions/A-Region1/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content.decode('utf-8')),
+                         {
+                             "query": {
+                                 "id": "A-Region1",
+                                 "feature_type": "REGION"
+                             },
+                             "data": {
+                                 "id": "A-Region1",
+                                 "name": "AwesomeRegion",
+                                 "description": "This region is really awesome.",
+                                 "feature_type": "REGION",
+                                 "observed_properties": [],
+                                 "related_sampling_feature_complex": [],
+                                 "shape": "SURFACE",
+                                 "coordinates": {
+                                     "absolute": None,
+                                     "representative": {
+                                         "representative_point": {
+                                             "horizontal_position": [
+                                                 {
+                                                     "x": -20.4567,
+                                                     "y": 70.4657,
+                                                     "datum": None,
+                                                     "type": "GEOGRAPHIC",
+                                                     "latitude": 70.4657,
+                                                     "longitude": -20.4567,
+                                                     "units": "DD"
+                                                 }
+                                             ],
+                                             "vertical_extent": [
+                                                 {
+                                                     "value": 1500.0,
+                                                     "resolution": None,
+                                                     "distance_units": "feet",
+                                                     "datum": "NAVD88",
+                                                     "type": "ALTITUDE"
+                                                 }
+                                             ]
+                                         },
+                                         "representative_point_type": "CENTER LOCAL SURFACE",
+                                         "vertical_position": None
+                                     }
+                                 },
+                                 "description_reference": None,
+                                 "related_party": [],
+                                 "utc_offset": None,
+                                 "url": "http://testserver/monitoringfeature/regions/A-Region1/"
+                             },
+                             "messages": []
+                         }
+                         )
+
+    def test_get_detail_missing(self):
+        response = self.client.get('/monitoringfeature/regions/A-FOO/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(json.loads(response.content.decode('utf-8')),
+                         {'detail': 'There is no detail for A-FOO', 'success': False})
+
+    def test_get_bad_id_prefix(self):
+        response = self.client.get('/monitoringfeature/regions/B-FOO/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(json.loads(response.content.decode('utf-8')),
+                         {'detail': 'There is no detail for B-FOO', 'success': False})
 
 
 class TestMeasurementTimeseriesTVPObservationAPI(TestCase):

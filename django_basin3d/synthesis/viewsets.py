@@ -113,12 +113,10 @@ class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
         synthesis_response['data'] = serializer.data
         return Response(synthesis_response)
 
-    def retrieve(self, pk: str, **kwargs) -> Response:
+    def retrieve(self, **kwargs) -> Response:
         """
-        Retrieve a single synthesized value
+        Retrieve a single object
 
-        :param request: The request object
-        :type request: :class:`rest_framework.request.Request`
         :param pk: The primary key
         :return: The HTTP Response
         :rtype: :class:`rest_framework.request.Response`
@@ -126,37 +124,30 @@ class DataSourcePluginViewSet(ViewSet, DataSourceModelAccess):
 
         request = kwargs['request']
         query = kwargs['query']
+        pk = kwargs['pk']
 
         try:
-            try:
-                itr = super(DataSourcePluginViewSet, self).list(query)
-                item = next(itr)
-            except StopIteration:
-                item = None
-                itr = None
+            item_synthesis_response = super(DataSourcePluginViewSet, self).retrieve(query)
 
-            if not item:
-                return Response({"success": False, "detail": "There is no detail for {}".format(pk)},
+            if not item_synthesis_response or not item_synthesis_response.data:
+                return Response({"success": False, "detail": f"There is no detail for {pk}"},
                                 status=status.HTTP_404_NOT_FOUND)
             else:
 
                 try:
-                    serializer = self.__class__.serializer_class(item, context={'request': request})
-                    synthesis_response = itr.synthesis_response.dict(exclude_unset=True)
+                    serializer = self.__class__.serializer_class(item_synthesis_response.data, context={'request': request})
+                    synthesis_response = item_synthesis_response.dict(exclude_unset=True)
                     synthesis_response['data'] = serializer.data
                     return Response(synthesis_response)
                 except Exception as e:
                     logger.error("Plugin error: {}".format(e))
 
-        except DataSource.DoesNotExist:
-            return Response({'success': False, 'detail': "There is no detail for datasource object {}.".format(pk)},
-                            status=status.HTTP_404_NOT_FOUND, )
         except Exception as e:
             return Response({'success': False, 'detail': str(e)},
                             status=status.HTTP_404_NOT_FOUND, )
 
 
-class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet):
+class MonitoringFeatureViewSet(DataSourcePluginViewSet, MonitoringFeatureAccess):
     """
     MonitoringFeature: A feature upon which monitoring is made. OGC Timeseries Profile OM_MonitoringFeature.
 
@@ -213,10 +204,10 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
                             status=status.HTTP_400_BAD_REQUEST, )
 
         feature_type = _get_request_feature_type(request)
-        params = request.query_params.dict()
-        return super().retrieve(request=request, pk=pk, query=QueryMonitoringFeature(monitoring_feature=[pk],
-                                                                                     feature_type=feature_type,
-                                                                                     **params))
+
+        # retrieve method order: MonitoringFeatureViewSet, DataSourceViewSet, MonitoringFeatureAccess
+        # call super force this order based on inherited class ordering
+        return super().retrieve(request=request, query=QueryMonitoringFeature(id=pk, feature_type=feature_type), pk=pk)
 
     @action(detail=True, url_name='regions-detail')
     def regions(self, request, pk=None):
@@ -263,8 +254,7 @@ class MonitoringFeatureViewSet(MonitoringFeatureAccess, DataSourcePluginViewSet)
         return self.retrieve(request=request, pk=pk)
 
 
-class MeasurementTimeseriesTVPObservationViewSet(MeasurementTimeseriesTVPObservationAccess,
-                                                 DataSourcePluginViewSet):
+class MeasurementTimeseriesTVPObservationViewSet(DataSourcePluginViewSet, MeasurementTimeseriesTVPObservationAccess):
     """
     MeasurementTimeseriesTVPObservation: Series of measurement (numerical) observations in
     TVP (time value pair) format grouped by time (i.e., a timeseries).

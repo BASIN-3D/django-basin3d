@@ -30,7 +30,7 @@ Sphinx is used to generate documentation.
 
 You first need to create a virtual environment for generating the docs and install docs requirements.
 
-    $ pip install -e "[.docs]"
+    $ pip install -e ".[docs]"
     
 Generate the documentation
    

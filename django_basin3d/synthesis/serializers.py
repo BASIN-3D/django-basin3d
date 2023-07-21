@@ -257,7 +257,7 @@ class RelatedSamplingFeatureSerializer(ChooseFieldsSerializerMixin, IdUrlSeriali
         # ToDo: verify it works without feature_type specified
         if "request" in self.context and self.context["request"] and obj.related_sampling_feature:
             if obj.related_sampling_feature_type in FeatureTypeEnum.values():
-                path_route = r'monitoringfeature-{}s-detail'.format(''.join(obj.related_sampling_feature_type.lower().split()))
+                path_route = r'monitoringfeature-{}s-detail'.format(''.join(obj.related_sampling_feature_type.lower().split('_')))
                 # else:
                 #     path_route = r'monitoringfeature-detail'
                 try:
@@ -299,7 +299,7 @@ class FeatureSerializer(ChooseFieldsSerializerMixin, serializers.Serializer):
         # ToDo: verify it works without feature_type specified
         if "request" in self.context and self.context["request"]:
             if obj.feature_type is not None:
-                path_route = r'monitoringfeature-{}s-detail'.format(''.join(obj.feature_type.lower().split()))
+                path_route = r'monitoringfeature-{}s-detail'.format(''.join(obj.feature_type.lower().split('_')))
                 # else:
                 # path_route = r'monitoringfeature-detail'
                 try:

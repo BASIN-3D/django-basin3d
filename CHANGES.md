@@ -1,5 +1,8 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.5
+Support FeatureTypeEnum change in basin3d 0.4.3 update; missed update.
+
 ## Version 1.0.4
 Support FeatureTypeEnum change in basin3d 0.4.3 update.
 

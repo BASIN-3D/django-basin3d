@@ -1,7 +1,13 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.4
+Support FeatureTypeEnum change in basin3d 0.4.3 update.
+
+## Version 1.0.3
+Fix url parameter parsing in viewsets.py
+
 ## Version 1.0.2
-Updates DataSourceModelViewset.retrieve method to use plugin get method.
+Updates DataSourceModelViewset.retrieve method to use plugin get method.`
 
 ## Version 1.0.1
 Minor maintenance to pin package versions.

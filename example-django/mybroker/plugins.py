@@ -248,7 +248,7 @@ class AlphaDataSourcePlugin(DataSourcePluginPoint):
     title = 'Alpha Data Source Plugin'
     plugin_access_classes = (AlphaMeasurementTimeseriesTVPObservationAccess, AlphaMonitoringFeatureAccess)
 
-    feature_types = ['REGION', 'POINT', 'TREE']
+    feature_types = ['REGION', 'POINT', 'TREE', 'HORIZONTAL_PATH']
 
     class DataSourceMeta:
         """

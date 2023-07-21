@@ -164,6 +164,19 @@ class TestSiteAPI(TestCase):
                          }
                          )
 
+    def get_monitoring_feature_list_empty(self):
+        self.maxDiff = None
+        response = self.client.get('/monitoringfeature/horizontalpaths/', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content.decode('utf-8')),
+                         {
+                             "query": {
+                                 "feature_type": "HORIZONTAL_PATH"
+                             },
+                             "data": []
+                         }
+                         )
+
     def test_get_detail_missing(self):
         response = self.client.get('/monitoringfeature/regions/A-FOO/', format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -74,7 +74,7 @@ def monitoring_features_lists(request, format=format):
         unsupported_feature_types = []
         for feature_type in datasource_feature_types:
             if feature_type in supported_feature_types:
-                ft = ''.join(feature_type.lower().split())
+                ft = ''.join(feature_type.lower().split('_'))
                 if ft not in monitoring_features_list.keys():
                     monitoring_features_list['{}s'.format(ft)] = \
                         '{}://{}/monitoringfeature/{}s/'.format(

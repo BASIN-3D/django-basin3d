@@ -40,7 +40,7 @@ def _get_request_feature_type(request):
     """
     for feature_type in FeatureTypeEnum.values():
         urlpath = request.path_info
-        url_feature_type = ''.join(feature_type.lower().split())
+        url_feature_type = ''.join(feature_type.lower().split('_'))
         if f'{url_feature_type}s' in urlpath.split('/'):
             return feature_type
     return None

@@ -48,7 +48,7 @@ def get_monitoring_feature_urls():
             datasource_feature_types = plugin.get_feature_types()
             for feature_type in datasource_feature_types:
                 if feature_type in supported_feature_types:
-                    ft = ''.join(feature_type.lower().split())
+                    ft = ''.join(feature_type.lower().split('_'))
                     path_route = '^monitoringfeature/{}s'.format(ft)
                     urls.extend([
                         re_path(r'{}/$'.format(path_route),

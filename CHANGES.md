@@ -1,5 +1,8 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.6
+Update basin3d version to 0.5.0 which includes a new data source plugin to EPA Water Quality eXchange.
+
 ## Version 1.0.5
 Support FeatureTypeEnum change in basin3d 0.4.3 update; missed update.
 

@@ -25,7 +25,7 @@ def test_get_observed_property(catalog):
         basin3d_vocab='RDC',
         full_name='River Discharge',
         categories=['Hydrogeology', 'Water Physical/Quality Parameters'],
-        units='mV'
+        units='m2/s'
     )
 
     basin3d_observed_property = catalog.find_observed_property('FOO')
@@ -44,7 +44,7 @@ def test_get_observed_properties(catalog):
         'MGO2', 'MGO3', 'MICRO_COV', 'MICRO_PEP', 'MICRO_PLFA', 'Mg', 'Mn', 'Mn2', 'Mo', 'N2', 'N2O', 'N2O_d15N_soilgas', 'N2O_d18O_soilgas',
         'NDVI', 'NH3', 'NH4', 'NIR_IN', 'NIR_REF', 'NO2', 'NO3', 'NPOC', 'Na', 'Ni', 'O2', 'ORP', 'P', 'PAI', 'PAR_IN', 'PAR_REF',
         'PFT', 'PH', 'PLT_HT', 'PO4', 'POC', 'PPT', 'PPT_SF', 'PPT_TOT_10', 'PPT_TOT_5', 'PPT_TOT_60', 'PPT_TOT_DAY', 'Pb', 'Porosity',
-        'RDC', 'RET_CUR', 'RGB', 'RH', 'Rb', 'S2', 'S2O3', 'SAL', 'SAP', 'SAT', 'SBD', 'SC', 'SD', 'SDE', 'SDEN', 'SEC', 'SED_SIZE',
+        'RDC', 'RET_CUR', 'RGB', 'RH', 'Rb', 'S2', 'S2O3', 'SAL', 'SAT', 'SBD', 'SC', 'SD', 'SDE', 'SDEN', 'SEC', 'SED_SIZE',
         'SEQ', 'SMO', 'SO4', 'SO4_d34S', 'SRAD', 'ST', 'STM', 'STO_RES', 'SWE', 'SWL', 'SWP', 'SYD', 'Sb', 'Se', 'Si', 'Sn', 'Sr',
         'TDS', 'TIC', 'TOC', 'TRB', 'TSS', 'Th', 'Ti', 'U', 'U235', 'UV_IN', 'UV_REF', 'V', 'WBT', 'WLE', 'WLH', 'WT', 'W_CH',
         'W_DIR', 'W_GS', 'W_SPD', 'Well logs', 'XANES', 'XRD', 'XRF', 'Zn', 'Zr', 'd13C', 'd15N']

@@ -1,5 +1,10 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.7
+Pin django to 4.0 and update basin3d version to 1.0.2 which includes updated basin3d observed propery vocabulary and a fix in the EPA plugin.
+
+To update the basin3d metadata on an existing deployment, run `./manage.py migrate` from the app's home directory.
+
 ## Version 1.0.6
 Update basin3d version to 0.5.0 which includes a new data source plugin to EPA Water Quality eXchange.
 

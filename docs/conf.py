@@ -409,4 +409,4 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 # linkcheck ignore: example use case url and dois that redirect
-linkcheck_ignore = [r'http://127\.0\.0\.1:\d+/.*', r'https://dx\.doi\.org/.*']
+linkcheck_ignore = [r'http://127\.0\.0\.1:\d+/.*', r'https://dx\.doi\.org/.*', 'http://martyalchin.com/2008/jan/10/simple-plugin-framework/']

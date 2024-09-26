@@ -1,5 +1,11 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.10
+Update basin3d version to 1.1.1 which includes hardening of the EPA plugin and support for forthcoming EPA WQP API v3.0.
+The EPA WQP web service API version as well as a timeout limit for failover of the GeoServer WFS service can be configured. See basin3d EPA plugin documentation.
+
+To update the basin3d metadata on an existing deployment, run `./manage.py migrate` from the app's home directory.
+
 ## Version 1.0.9
 Update basin3d version to 1.0.3 which includes a fix in the EPA plugin to handle empty results properly.
 

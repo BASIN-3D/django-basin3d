@@ -315,7 +315,7 @@ class CatalogDjango(CatalogBase):
         for attr_mapping in attr_mappings:
             yield self._convert_django_attribute_mapping(attr_mapping)
 
-    def _init_catalog(self):
+    def _init_catalog(self, **kwargs):
         """
         Initialize the catalog database
 

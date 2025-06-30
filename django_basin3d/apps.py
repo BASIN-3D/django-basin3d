@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.db.models.signals import post_migrate
 
-from django_basin3d.catalog import load_data_sources
+from django_basin3d.catalog import reload_data_sources
 
 
 class Basin3DConfig(AppConfig):
@@ -9,4 +9,4 @@ class Basin3DConfig(AppConfig):
 
     def ready(self):
         # Execute the post migration scripts
-        post_migrate.connect(load_data_sources, sender=self)
+        post_migrate.connect(reload_data_sources, sender=self)

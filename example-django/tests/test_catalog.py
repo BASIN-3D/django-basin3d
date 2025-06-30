@@ -1,7 +1,7 @@
 import pytest
 
 from basin3d.core.models import ObservedProperty
-from django_basin3d.catalog import CatalogException
+from django_basin3d.catalog import CatalogException, reload_data_sources
 
 
 # # ---------------------------------------
@@ -327,3 +327,33 @@ def test_find_datasource_attribute_mapping(catalog, query, expected):
 
     attr_mapping = catalog.find_datasource_attribute_mapping(**query)
     assert attr_mapping.to_dict() == expected
+
+
+@pytest.mark.django_db
+def test_reload_data_source(catalog):
+    """
+    Test the reload data source functionality.
+
+    :param catalog:
+    :return:
+    """
+
+    from django_basin3d import models as django_models
+
+    attribute_mapping_count = django_models.AttributeMapping.objects.count()
+    observed_property_count = django_models.ObservedProperty.objects.count()
+    datasource_count = django_models.DataSource.objects.count()
+
+    assert datasource_count == 2
+    assert attribute_mapping_count == 69
+
+    django_models.AttributeMapping.objects.all().delete()
+    django_models.DataSource.objects.get(name='Alpha').delete()
+
+    assert django_models.DataSource.objects.count() == 1
+    assert django_models.AttributeMapping.objects.count() == 0
+
+    reload_data_sources(catalog)
+    assert django_models.AttributeMapping.objects.count() == attribute_mapping_count
+    assert django_models.DataSource.objects.count() == datasource_count
+    assert django_models.ObservedProperty.objects.count() == observed_property_count

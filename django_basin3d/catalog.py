@@ -24,7 +24,7 @@ from django.db.models import Q
 
 from basin3d.core.catalog import CatalogBase, CatalogException
 from basin3d.core.models import ObservedProperty, AttributeMapping
-from basin3d.core.plugin import PluginMount
+# from basin3d.core.plugin import PluginMount
 from basin3d.core.schema.enum import BaseEnum, MappedAttributeEnum, MAPPING_DELIMITER, NO_MAPPING_TEXT, set_mapped_attribute_enum_type
 
 logger = logging.getLogger(__name__)
@@ -410,15 +410,53 @@ def load_data_sources(sender, **kwargs):
     :return:
     """
     # Load all the plugins found in apps
+    from basin3d.core.plugin import PluginMount
+
     for django_app in settings.INSTALLED_APPS:
         try:
-            importlib.import_module("{}.plugins".format(django_app))
-            logger.info(f"Loaded {django_app} plugins")
+            importlib.import_module(f'{django_app}.plugins')
+            logger.info(f'Loaded {django_app} plugins')
 
+            plugins = kwargs.get('plugins')
+            if not plugins:
+                plugins = PluginMount.plugins.values()
+                plugin_count = len(plugins)
+
+            logger.info(f'Attempting to load {plugin_count} plugins for {django_app}.')
             catalog = CatalogDjango()
-            catalog.initialize([v(catalog) for v in PluginMount.plugins.values()])
+            catalog.initialize([v(catalog) for v in plugins])
         except ImportError as e:
-            logger.error(f'import_error: {e}')
+            logger.warning(f'Warning: Potential error during attempt to import plugins for installed app: {e}. '
+                           f'Please double check.')
             pass
         except OperationalError as oe:
-            logger.error(f"Operational Error '{oe}'' - Most likely happens on a reverse migration.")
+            logger.error(f'Operational Error "{oe}" - Most likely happens on a reverse migration.')
+
+
+def reload_data_sources(sender, **kwargs):
+    """
+
+    :param sender:
+    :param kwargs:
+    :return:
+    """
+    from django_basin3d import models as django_models
+
+    try:
+        django_models.AttributeMapping.objects.all().delete()
+        logger.info('Attribute Mappings entries deleted.')
+        django_models.ObservedProperty.objects.all().delete()
+        logger.info('Observed Properties entries deleted.')
+        django_models.DataSource.objects.all().delete()
+        logger.info('Data Source entries deleted.')
+
+        load_data_sources(sender, **kwargs)
+        attribute_mapping_count = django_models.AttributeMapping.objects.count()
+        observed_property_count = django_models.ObservedProperty.objects.count()
+        datasource_count = django_models.DataSource.objects.count()
+        logger.info(f'Data sources reloaded: data sources = {datasource_count}, '
+                    f'observed properties = {observed_property_count}, '
+                    f'attribute mappings = {attribute_mapping_count}')
+
+    except CatalogException as e:
+        logger.error(f'Error reloading data sources: {e}')

@@ -1,5 +1,10 @@
 # Django BASIN-3D Releases
 
+## Version 1.0.12
+Force reload of plugins and their data upon running `./manage.py migrate` on existing deployments. Also changed plugin import errors to more appropriately be warnings. Note: the forced reload does not support removal of data sources from existing deployments.
+
+To update the basin3d metadata on an existing deployment, run `./manage.py migrate` from the app's home directory.
+
 ## Version 1.0.11
 Update basin3d version to 1.1.2 which includes a bug fix and enhancement to EPA plugin.
 
